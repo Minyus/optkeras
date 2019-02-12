@@ -1,5 +1,6 @@
-# optkeras
-OptKeras: Wrapper of Optuna and Keras to optimize hyperparameters of Deep Learning models
+# OptKeras
+
+A Python wrapper around Optuna and Keras to optimize hyperparameters of Deep Learning models
 
 ### What is Optuna?
 
