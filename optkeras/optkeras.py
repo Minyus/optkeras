@@ -21,9 +21,9 @@ class OptKeras(Callback):
         # Create Optuna Study
         self.study = optuna.create_study(**kwargs)
         self.study_name = self.study.study_name
-        self.keras_log_file_path = study_name + '_Keras.csv'
-        self.optuna_log_file_path = study_name + '_Optuna.csv'
-        self.model_file_prefix = study_name + '_' + model_file_prefix
+        self.keras_log_file_path = self.study_name + '_Keras.csv'
+        self.optuna_log_file_path = self.study_name + '_Optuna.csv'
+        self.model_file_prefix = self.study_name + '_' + model_file_prefix
         self.model_file_suffix = model_file_suffix
         self.monitor = monitor    
         # The larger acc or val_acc, the better
