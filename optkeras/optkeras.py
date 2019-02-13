@@ -151,12 +151,12 @@ class OptKeras(Callback):
     def on_epoch_end(self, epoch, logs={}):
         self.datetime_epoch_end = self.get_datetime()
         # Add error and val_error to logs for use as an objective to minimize
-        logs.setdefault('error', 1 - logs.get('acc', 0))
-        logs.setdefault('val_error', 1 - logs.get('val_acc', 0))
-        logs.setdefault('_Datetime_epoch_begin', self.datetime_epoch_begin)
-        logs.setdefault('_Datetime_epoch_end', self.datetime_epoch_end)
-        logs.setdefault('_Trial_id', self.trial.trial_id)
-        logs.setdefault('_Monitor', self.monitor)
+        logs['error'] = 1 - logs.get('acc', 0)
+        logs['val_error'] = 1 - logs.get('val_acc', 0)
+        logs['_Datetime_epoch_begin'] = self.datetime_epoch_begin
+        logs['_Datetime_epoch_end'] = self.datetime_epoch_end
+        logs['_Trial_id'] = self.trial.trial_id
+        logs['_Monitor'] = self.monitor
         # Update the best logs
 
         def update_flag(latest, best, mode_max = False):
