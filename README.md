@@ -55,7 +55,7 @@ Option 2: clone this GitHub repository, cd into the downloaded repository, and r
 
 #### 2. Define objective function for Optuna
 
-##### 2.1 Specify callbacks(trial) and keras_verbose to Keras Sequential() object's fit (or fit_generator) method
+##### 2.1 Specify callbacks(trial) and keras_verbose to fit (or fit_generator) method of Keras
   
     model.fit(x_train, y_train, 
         validation_data = (x_test, y_test),
