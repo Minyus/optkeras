@@ -58,7 +58,7 @@ OptKeras can leverage this Optuna's option. If enable_pruning = True, OptKeras c
 
 No. You can access the full feaures of Keras and Optuna even if OptKeras is used. 
 
-### What was the tested environment for OptKeras 0.0.1?
+### What was the tested environment for OptKeras?
 
 ```
 Google Colaboratory with GPU enabled
@@ -67,8 +67,9 @@ Driver Version: 410.79
 CUDA Version: 10.0
 Ubuntu 18.04.1 LTS
 Python 3.6.7
-Optuna 0.7.0
 Keras 2.2.4
 TensorFlow 1.13.0-rc1
+Optuna 0.7.0
+OptKeras 0.0.1
 ```
 
