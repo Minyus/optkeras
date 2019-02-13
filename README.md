@@ -2,8 +2,6 @@
 
 A Python wrapper around Optuna and Keras to optimize hyperparameters of Deep Learning models
 
-## Q&A
-
 ### What is Optuna?
 
 Optuna is an automatic hyperparameter optimization software framework, particularly designed for machine learning. 
@@ -40,6 +38,45 @@ Option 2: clone this GitHub repository, cd into the downloaded repository, and r
 ```
 python setup.py install
 ```
+
+### How to use OptKeras?
+
+
+#### 0. Import OptKeras class
+
+    from optkeras.optkeras import OptKeras
+    
+#### 1. Instantiate OptKeras class
+	
+  You can specify arguments for Optuna's create_study method and other arguments for OptKeras such as enable_pruning.
+  
+    ok = OptKeras(study_name = 'my_optimization', enable_pruning=False)
+
+
+#### 2. Define objective function for Optuna
+
+##### 2.1 Specify callbacks(trial) and keras_verbose to Keras Sequential() object's fit (or fit_generator) method.
+  
+    model.fit(x_train, y_train, 
+        validation_data = (x_test, y_test),
+        callbacks = ok.callbacks(trial), 
+        verbose = ok.keras_verbose )
+
+
+##### 2.2 Return trial_best_value from OptKeras 
+  
+
+    return ok.trial_best_value
+
+	
+#### 3. Run optimize
+  You can specify arguments for Optuna's optimize method
+    
+    ok.optimize(objective, n_trials=10, timeout=12*60*60)
+
+  
+Please see the examples in "examples" folder.
+
 
 ### Why OptKeras was developed?
 Current version of Optuna supports minimization but not maximization. 
