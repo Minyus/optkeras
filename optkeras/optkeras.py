@@ -12,11 +12,11 @@ class OptKeras(Callback):
     def __init__(self, 
                  monitor = 'val_error', # alternatively 'val_loss'
                  enable_pruning = False,
-                 verbose = 1,                                          
-                 num_models_to_save = 1, # either 1, 0, or -1 (save all models)
+                 enable_logging=True,
+                 models_to_keep = 1, # either 1, 0, or -1 (save all models)
                  model_file_prefix = 'model_', 
-                 model_file_suffix = '.hdf5', 
-                 save_log = True,
+                 model_file_suffix = '.hdf5',
+                 verbose = 1,
                  **kwargs):                     
         # Create Optuna Study
         self.study = optuna.create_study(**kwargs)
@@ -34,8 +34,8 @@ class OptKeras(Callback):
         self.latest_value = self.default_value
         self.trial_best_logs = {}
         self.trial_best_value = self.default_value
-        self.num_models_to_save = num_models_to_save
-        self.save_log = save_log
+        self.models_to_keep = models_to_keep
+        self.enable_logging = enable_logging
         self.enable_pruning = enable_pruning
         self.verbose = verbose
         self.keras_verbose = max(self.verbose - 1 , 0) # decrement
@@ -53,8 +53,8 @@ class OptKeras(Callback):
                         self.model_file_suffix ])
 
     def clean_up_model_files(self): 
-        # currently version supports only num_models_to_save <= 1
-        if self.num_models_to_save in [1]: 
+        # currently version supports only models_to_keep <= 1
+        if self.models_to_keep in [1]:
             self.best_model_file_path = \
                 self.get_model_file_path(self.best_trial.trial_id)
             self.model_file_list = \
@@ -72,10 +72,10 @@ class OptKeras(Callback):
         self.trial = trial
         self.model_file_path = self.get_model_file_path(trial.trial_id)     
         callbacks.append(self)
-        if self.save_log:
+        if self.enable_logging:
             csv_logger = CSVLogger(self.keras_log_file_path, append = True)
             callbacks.append(csv_logger)
-        if self.num_models_to_save != 0:            
+        if self.models_to_keep != 0:
             check_point = ModelCheckpoint(filepath = self.model_file_path, 
                 monitor = self.monitor, mode = self.mode, save_best_only = True, 
                 save_weights_only = False, period = 1, 
