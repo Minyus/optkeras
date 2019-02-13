@@ -1,42 +1,45 @@
-# -*- coding: utf-8 -*-
-
 from keras.callbacks import Callback, CSVLogger, ModelCheckpoint
-import optuna
 
 import os, glob
 import numpy as np
 from datetime import datetime
+
+import optuna
 
 
 class OptKeras(Callback):
     def __init__(self, 
                  monitor = 'val_error', # alternatively 'val_loss'
                  enable_pruning = False,
-                 enable_logging=True,
+                 enable_keras_log = True,
+                 keras_log_file_suffix = '_Keras.csv',
+                 enable_optuna_log = True,
+                 optuna_log_file_suffix = '_Optuna.csv',
                  models_to_keep = 1, # either 1, 0, or -1 (save all models)
                  model_file_prefix = 'model_', 
                  model_file_suffix = '.hdf5',
+                 directory_path = '',
                  verbose = 1,
                  **kwargs):                     
         # Create Optuna Study
         self.study = optuna.create_study(**kwargs)
         self.study_name = self.study.study_name
-        self.keras_log_file_path = self.study_name + '_Keras.csv'
-        self.optuna_log_file_path = self.study_name + '_Optuna.csv'
-        self.model_file_prefix = self.study_name + '_' + model_file_prefix
-        self.model_file_suffix = model_file_suffix
-        self.monitor = monitor    
-        # The larger acc or val_acc, the better
-        self.mode_max = (monitor in ['acc', 'val_acc'])
+        self.keras_log_file_path = directory_path + self.study_name + keras_log_file_suffix
+        self.optuna_log_file_path = directory_path + self.study_name + optuna_log_file_suffix
+        self.monitor = monitor
+        self.mode_max = (monitor in ['acc', 'val_acc']) # The larger acc or val_acc, the better
         self.mode = 'max' if self.mode_max else 'min'
         self.default_value = -np.Inf if self.mode_max else np.Inf
         self.latest_logs = {}
         self.latest_value = self.default_value
         self.trial_best_logs = {}
         self.trial_best_value = self.default_value
-        self.models_to_keep = models_to_keep
-        self.enable_logging = enable_logging
         self.enable_pruning = enable_pruning
+        self.enable_keras_log = enable_keras_log
+        self.enable_optuna_log = enable_optuna_log
+        self.models_to_keep = models_to_keep
+        self.model_file_prefix = directory_path + self.study_name + '_' + model_file_prefix
+        self.model_file_suffix = model_file_suffix
         self.verbose = verbose
         self.keras_verbose = max(self.verbose - 1 , 0) # decrement
         if self.verbose >= 1:
@@ -72,7 +75,7 @@ class OptKeras(Callback):
         self.trial = trial
         self.model_file_path = self.get_model_file_path(trial.trial_id)     
         callbacks.append(self)
-        if self.enable_logging:
+        if self.enable_keras_log:
             csv_logger = CSVLogger(self.keras_log_file_path, append = True)
             callbacks.append(csv_logger)
         if self.models_to_keep != 0:
@@ -106,7 +109,7 @@ class OptKeras(Callback):
 
     def synch_with_optuna(self):
         # Generate the Optuna CSV log file
-        self.generate_optuna_log_file()
+        if self.enable_optuna_log: self.generate_optuna_log_file()
         # best_trial
         try:
             self.best_trial = self.study.best_trial
@@ -122,7 +125,7 @@ class OptKeras(Callback):
                     self.latest_trial = self.study.trials[-2]
             else: 
                 self.latest_trial = self.study.trials[-1]         
-        self.print_results()
+        if self.verbose >= 1: self.print_results()
 
     def print_results(self):
         if self.verbose >= 1 and len(self.study.trials) > 0:
@@ -179,4 +182,4 @@ class OptKeras(Callback):
 
 
 def str_list(input_list):
-    return ['{}'.format(e) for e in input_list]
+    return ['{}'.format(e) for e in input_list] # convert all elements to string
