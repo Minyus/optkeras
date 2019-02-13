@@ -85,7 +85,7 @@ Regarding optuna.study.create_study and optimize, please see:
 
 ### Why OptKeras was developed?
 Current version of Optuna supports minimization but not maximization. 
-This becomes a problem to use Optuna's pruning feature based on accuracy value (objective to maximize) as Keras logs acc (and val_acc) and loss (and val_loss) but not error (= 1 - accuracy) in the default callback.
+This becomes a problem to use Optuna's pruning feature based on accuracy value (an objective to maximize) as Keras does not log error (= 1 - accuracy) in the default callback. OptKeras calculates error and val_error from acc and val_acc, respectively, in a Keras callback so Optuna can use it. 
 
 ### Why does the developer believe OptKeras is better than other the Python wrappers of Keras to optimize hyperparameters?
 
