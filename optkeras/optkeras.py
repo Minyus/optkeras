@@ -43,7 +43,7 @@ class OptKeras(Callback):
         self.verbose = verbose
         self.keras_verbose = max(self.verbose - 1 , 0) # decrement
         if self.verbose >= 1:
-            print('[{}] '.format(self.get_datetime()), 
+            print('[{}]'.format(self.get_datetime()),
             'Ready for optimization. (message printed as verbose is set to 1+)')
 
     def optimize(self, *args, **kwargs):
