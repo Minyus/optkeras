@@ -217,7 +217,7 @@ class OptKeras(Callback):
             logs:
         """
         self.datetime_epoch_begin = self.get_datetime()
-        ## Reset trial best logs
+        # Reset trial best logs
         self.trial_best_logs = {}
 
     def on_epoch_end(self, epoch, logs={}):
@@ -257,6 +257,36 @@ class OptKeras(Callback):
         # (logs include timestamp, monitor, val_acc, val_error, val_loss)
         self.save_logs_as_optuna_attributes()
 
+    def grid_search(self, n_combinations, func, n_trials=1, **kwargs):
+        """ Grid search
+        Args:
+            n_combinations: Number of combinations of parameters.
+            func: A callable that implements objective function.
+            n_trials: The interval of trials to monitor when to finish. 1 in default.
+            **kwargs: The other parameters for study.optimize:
+                timeout=None, n_jobs=1, catch=(<class 'Exception'>, )
+
+        Returns: None
+        """
+        while True:
+            trials = self.study.trials
+            completed_params_list = []
+            if len(trials) >= 1:
+                completed_params_list = \
+                    [t.params for t in trials if t.state == optuna.structs.TrialState.COMPLETE]
+                if self.verbose >= 3:
+                    print('[{}] '.format(self.get_datetime()) + 'Parameters completed: ', completed_params_list)
+            n_completed = len(completed_params_list)  # TODO change to unique num of completed_params_list
+            progress = n_completed / n_combinations
+            if self.verbose >= 1:
+                print('[{}] '.format(self.get_datetime()) + \
+                      'Progress: {:4.0f}% | Completed: {}'.
+                      format(progress * 100, n_completed))
+            if progress >= 1: break
+            self.study.optimize(func, n_trials=n_trials, **kwargs)
+        self.post_process()
+
+
 
 def str_list(input_list):
     """ Convert all the elements in a list to str
@@ -265,3 +295,34 @@ def str_list(input_list):
     Returns: list of string elements
     """
     return ['{}'.format(e) for e in input_list] # convert all elements to string
+
+
+import math
+
+from optuna.pruners import BasePruner
+from optuna.storages import BaseStorage  # NOQA
+from optuna.structs import TrialState
+
+
+class DuplicatePruner(BasePruner):
+    """ Prune if the same parameter set was found in Optuna database
+    """
+    def prune(self, storage, study_id, trial_id, step):
+        # type: (BaseStorage, int, int, int) -> bool
+        """Please consult the documentation for :func:`BasePruner.prune`."""
+
+        n_trials = storage.get_n_trials(study_id, TrialState.COMPLETE)
+
+        if n_trials == 0:
+            return False
+
+        trials = storage.get_all_trials(study_id)
+        assert storage.get_n_trials(study_id, TrialState.RUNNING)
+        assert trials[-1].state == optuna.structs.TrialState.RUNNING
+        completed_params_list = \
+            [t.params for t in trials \
+             if t.state == optuna.structs.TrialState.COMPLETE]
+        if trials[-1].params in completed_params_list:
+            return True
+
+        return False
