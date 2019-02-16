@@ -200,7 +200,8 @@ class OptKeras(Callback):
         """ Print summary of results
         Returns: None
         """
-        if self.verbose >= 1 and len(self.study.trials) > 0:
+        if len(self.study.trials) > 0 and (self.verbose >= 2 or \
+            (self.verbose = 1 and self.latest_trial.state != optuna.structs.TrialState.PRUNED )):
             # if any trial with a valid value is found, show the result
             print(
                 '[{}] '.format(self.get_datetime()) + \
@@ -289,7 +290,7 @@ class OptKeras(Callback):
                 self.gs_progress = gs_progress
                 if self.verbose >= 1:
                     print('[{}] '.format(self.get_datetime()) + \
-                          'Progress: {:3.0f}% | Completed: {:5d} / {}'.
+                          'Completed: {:3.0f}% ({:5d} / {})'.
                           format(self.gs_progress * 100, self.n_completed, n_trials))
             if gs_progress >= 1: break
             self.study.optimize(func, n_trials=1, **kwargs)
