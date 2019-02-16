@@ -286,8 +286,8 @@ class OptKeras(Callback):
             progress = n_completed / n_trials
             if self.verbose >= 1:
                 print('[{}] '.format(self.get_datetime()) + \
-                      'Progress: {:4.0f}% | Completed: {}'.
-                      format(progress * 100, n_completed))
+                      'Progress: {:3.0f}% | Completed: {:5d} / {}'.
+                      format(progress * 100, n_completed, n_trials))
             if progress >= 1: break
             self.study.optimize(func, n_trials=1, **kwargs)
         self.post_process()
