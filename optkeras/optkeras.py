@@ -50,12 +50,12 @@ class OptKeras(Callback):
             grid_search: Run grid search instead of optimization. False in default.
             **kwargs: parameters for optuna.study.create_study():
                 study_name, storage, sampler=None, pruner=None, direction='minimize'
-                See https://optuna.readthedocs.io/en/latest/reference/study.html
+                See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.create_study
         """
         self.grid_search = grid_search
         if self.grid_search:
-            kwargs['sampler'] = optuna.samplers.RandomSampler()
-            kwargs['pruner'] = RepeatPruner()
+            kwargs.setdefault('sampler', optuna.samplers.RandomSampler())
+            kwargs.setdefault('pruner', RepeatPruner())
         self.study = optuna.create_study(**kwargs)
         self.study_name = self.study.study_name
         self.keras_log_file_path = directory_path + self.study_name + keras_log_file_suffix
@@ -86,7 +86,7 @@ class OptKeras(Callback):
             *args: parameters for study.optimize optimize(): func
             **kwargs: parameters for study.optimize optimize():
                 n_trials=None, timeout=None, n_jobs=1, catch=(<class 'Exception'>, )
-                See https://optuna.readthedocs.io/en/latest/reference/study.html
+                See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.Study.optimize
 
         Returns: None
         """
@@ -105,10 +105,9 @@ class OptKeras(Callback):
                         self.model_file_suffix ])
 
     def clean_up_model_files(self):
-        """ Delete model files not needed
+        """ Delete model files not needed. Currently version supports only models_to_keep <= 1
         Returns: None
         """
-        # currently version supports only models_to_keep <= 1
         if self.models_to_keep in [1]:
             self.best_model_file_path = \
                 self.get_model_file_path(self.best_trial.trial_id)
@@ -119,8 +118,8 @@ class OptKeras(Callback):
                     os.remove(model_file)
 
     def get_datetime(self):
-        """
-        Returns: date time string in '%Y-%m-%d %H:%M:%S.%f' format
+        """ Get the date time now
+        Returns: the date time string in '%Y-%m-%d %H:%M:%S.%f' format
         """
         return datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
 
@@ -264,15 +263,14 @@ class OptKeras(Callback):
         # (logs include timestamp, monitor, val_acc, val_error, val_loss)
         self.save_logs_as_optuna_attributes()
 
-    def grid_search(self, n_combinations, func, n_trials=1, **kwargs):
+    def grid_search(self, func, n_trials, **kwargs):
         """ Grid search
         Args:
-            n_combinations: Number of combinations of parameters.
             func: A callable that implements objective function.
-            n_trials: The interval of trials to monitor when to finish. 1 in default.
+            n_trials: Number of combinations of parameters.
             **kwargs: The other parameters for study.optimize:
                 timeout=None, n_jobs=1, catch=(<class 'Exception'>, )
-
+                See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.Study.optimize
         Returns: None
         """
         while True:
@@ -283,14 +281,14 @@ class OptKeras(Callback):
                     [t.params for t in trials if t.state == optuna.structs.TrialState.COMPLETE]
                 if self.verbose >= 3:
                     print('[{}] '.format(self.get_datetime()) + 'Parameters completed: ', completed_params_list)
-            n_completed = len(completed_params_list)  # TODO change to unique num of completed_params_list
-            progress = n_completed / n_combinations
+            n_completed = len(completed_params_list) # TODO: change to unique num of completed_params_list
+            progress = n_completed / n_trials
             if self.verbose >= 1:
                 print('[{}] '.format(self.get_datetime()) + \
                       'Progress: {:4.0f}% | Completed: {}'.
                       format(progress * 100, n_completed))
             if progress >= 1: break
-            self.study.optimize(func, n_trials=n_trials, **kwargs)
+            self.study.optimize(func, n_trials=1, **kwargs)
         self.post_process()
 
 
@@ -301,7 +299,7 @@ def str_list(input_list):
         input_list: list of any elements
     Returns: list of string elements
     """
-    return ['{}'.format(e) for e in input_list] # convert all elements to string
+    return ['{}'.format(e) for e in input_list]
 
 
 import math
@@ -313,6 +311,8 @@ from optuna.structs import TrialState
 
 class RepeatPruner(BasePruner):
     """ Prune if the same parameter set was found in Optuna database
+        Coded based on source code of MedianPruner class at
+        https://github.com/pfnet/optuna/blob/master/optuna/pruners/median.py
     """
     def prune(self, storage, study_id, trial_id, step):
         # type: (BaseStorage, int, int, int) -> bool
