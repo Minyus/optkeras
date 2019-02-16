@@ -137,4 +137,5 @@ No. You can access the full feaures of Keras and Optuna even if OptKeras is used
 	Optuna 0.7.0
 	OptKeras 0.0.1
 
-
+### License
+MIT License (see https://github.com/Minyus/optkeras/blob/master/LICENSE).
