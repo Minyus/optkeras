@@ -282,13 +282,15 @@ class OptKeras(Callback):
                     [t.params for t in trials if t.state == optuna.structs.TrialState.COMPLETE]
                 if self.verbose >= 3:
                     print('[{}] '.format(self.get_datetime()) + 'Parameters completed: ', completed_params_list)
-            n_completed = len(completed_params_list) # TODO: change to unique num of completed_params_list
-            progress = n_completed / n_trials
-            if self.verbose >= 1:
-                print('[{}] '.format(self.get_datetime()) + \
-                      'Progress: {:3.0f}% | Completed: {:5d} / {}'.
-                      format(progress * 100, n_completed, n_trials))
-            if progress >= 1: break
+            self.n_completed = len(completed_params_list) # TODO: change to unique num of completed_params_list
+            gs_progress = self.n_completed / n_trials
+            if gs_progress > self.gs_progress:
+                self.gs_progress = gs_progress
+                if self.verbose >= 1:
+                    print('[{}] '.format(self.get_datetime()) + \
+                          'Progress: {:3.0f}% | Completed: {:5d} / {}'.
+                          format(self.gs_progress * 100, self.n_completed, n_trials))
+            if gs_progress >= 1: break
             self.study.optimize(func, n_trials=1, **kwargs)
         self.post_process()
 
