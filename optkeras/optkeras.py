@@ -285,12 +285,13 @@ class OptKeras(Callback):
                 if self.verbose >= 3:
                     print('[{}] '.format(self.get_datetime()) + 'Parameters completed: ', completed_params_list)
             self.n_completed = len(completed_params_list) # TODO: change to unique num of completed_params_list
+            n_trials = int(n_trials)
             gs_progress = self.n_completed / n_trials
             if gs_progress > self.gs_progress:
                 self.gs_progress = gs_progress
                 if self.verbose >= 1:
                     print('[{}] '.format(self.get_datetime()) + \
-                          'Completed: {:3.0f}% ({:5d} / {})'.
+                          'Completed: {:3.0f}% ({:5d} / {:5d})'.
                           format(self.gs_progress * 100, self.n_completed, n_trials))
             if gs_progress >= 1: break
             self.study.optimize(func, n_trials=1, **kwargs)
