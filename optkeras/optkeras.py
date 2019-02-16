@@ -35,7 +35,7 @@ class OptKeras(Callback):
                 '_Keras.csv' in default.
             enable_optuna_log: Enable generating a log file by Optuna study.trials_dataframe().
                 True in default.
-                See https://optuna.readthedocs.io/en/latest/reference/study.html
+                See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.Study.trials_dataframe
             optuna_log_file_suffix: Suffix of the file if enable_optuna_log is True.
             models_to_keep: The number of models to keep.
                 Either 1 in default , 0, or -1 (save all models).
