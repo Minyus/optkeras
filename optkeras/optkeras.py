@@ -201,7 +201,7 @@ class OptKeras(Callback):
         Returns: None
         """
         if len(self.study.trials) > 0 and (self.verbose >= 2 or \
-            (self.verbose = 1 and self.latest_trial.state != optuna.structs.TrialState.PRUNED )):
+            (self.verbose == 1 and self.latest_trial.state != optuna.structs.TrialState.PRUNED)):
             # if any trial with a valid value is found, show the result
             print(
                 '[{}] '.format(self.get_datetime()) + \
