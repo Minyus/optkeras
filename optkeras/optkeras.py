@@ -57,6 +57,7 @@ class OptKeras(Callback):
             kwargs.setdefault('sampler', optuna.samplers.RandomSampler())
             kwargs.setdefault('pruner', RepeatPruner())
             enable_pruning = True
+        self.gs_progress = 0
         self.study = optuna.create_study(**kwargs)
         self.study_name = self.study.study_name
         self.keras_log_file_path = directory_path + self.study_name + keras_log_file_suffix
