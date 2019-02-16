@@ -22,21 +22,23 @@ class OptKeras(Callback):
                  model_file_suffix = '.hdf5',
                  directory_path = '',
                  verbose = 1,
+                 grid_search = False,
                  **kwargs):
         """ Wrapper of optuna.create_study
         Args:
             monitor: The metric to optimize by Optuna. 'val_error' in default or 'val_loss'.
-            enable_pruning: Enable pruning by Optuna.
+            enable_pruning: Enable pruning by Optuna. False in default.
                 See https://optuna.readthedocs.io/en/latest/tutorial/pruning.html
-            enable_keras_log: Enable logging by Keras CSVLogger callback.
+            enable_keras_log: Enable logging by Keras CSVLogger callback. True in default.
                 See https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/CSVLogger
             keras_log_file_suffix: Suffix of the file if enable_keras_log is True.
                 '_Keras.csv' in default.
             enable_optuna_log: Enable generating a log file by Optuna study.trials_dataframe().
+                True in default.
                 See https://optuna.readthedocs.io/en/latest/reference/study.html
             optuna_log_file_suffix: Suffix of the file if enable_optuna_log is True.
             models_to_keep: The number of models to keep.
-                either 1 in default , 0, or -1 (save all models).
+                Either 1 in default , 0, or -1 (save all models).
             model_file_prefix: Prefix of the model file path if models_to_keep is not 0.
                 'model_' in default.
             model_file_suffix: Suffix of the model file path if models_to_keep is not 0.
@@ -45,10 +47,15 @@ class OptKeras(Callback):
                 '' (Current working directory) in default.
             verbose: How much to print messages onto the screen.
                 0 (no messages), 1 in default, 2 (troubleshooting)
+            grid_search: Run grid search instead of optimization. False in default.
             **kwargs: parameters for optuna.study.create_study():
                 study_name, storage, sampler=None, pruner=None, direction='minimize'
                 See https://optuna.readthedocs.io/en/latest/reference/study.html
         """
+        self.grid_search = grid_search
+        if self.grid_search:
+            kwargs['sampler'] = optuna.samplers.RandomSampler()
+            kwargs['pruner'] = RepeatPruner()
         self.study = optuna.create_study(**kwargs)
         self.study_name = self.study.study_name
         self.keras_log_file_path = directory_path + self.study_name + keras_log_file_suffix
@@ -304,7 +311,7 @@ from optuna.storages import BaseStorage  # NOQA
 from optuna.structs import TrialState
 
 
-class DuplicatePruner(BasePruner):
+class RepeatPruner(BasePruner):
     """ Prune if the same parameter set was found in Optuna database
     """
     def prune(self, storage, study_id, trial_id, step):
