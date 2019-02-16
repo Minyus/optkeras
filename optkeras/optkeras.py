@@ -22,7 +22,7 @@ class OptKeras(Callback):
                  model_file_suffix = '.hdf5',
                  directory_path = '',
                  verbose = 1,
-                 grid_search = False,
+                 grid_search_mode = False,
                  **kwargs):
         """ Wrapper of optuna.create_study
         Args:
@@ -47,13 +47,13 @@ class OptKeras(Callback):
                 '' (Current working directory) in default.
             verbose: How much to print messages onto the screen.
                 0 (no messages), 1 in default, 2 (troubleshooting)
-            grid_search: Run grid search instead of optimization. False in default.
+            grid_search_mode: Run grid search instead of optimization. False in default.
             **kwargs: parameters for optuna.study.create_study():
                 study_name, storage, sampler=None, pruner=None, direction='minimize'
                 See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.create_study
         """
-        self.grid_search = grid_search
-        if self.grid_search:
+        self.grid_search_mode = grid_search_mode
+        if self.grid_search_mode:
             kwargs.setdefault('sampler', optuna.samplers.RandomSampler())
             kwargs.setdefault('pruner', RepeatPruner())
             enable_pruning = True
@@ -228,7 +228,7 @@ class OptKeras(Callback):
         self.trial_best_logs = {}
 
     def on_epoch_end(self, epoch, logs={}):
-        """ called at the end of every epoch by Keras
+        """ Called at the end of every epoch by Keras
         Args:
             epoch:
             logs:
