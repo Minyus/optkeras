@@ -1,12 +1,24 @@
 # OptKeras
 
-A Python wrapper around Optuna and Keras to optimize hyperparameters of Deep Learning models
+A Python package designed to optimize hyperparameters of Deep Learning models (a wrapper of Keras and Optuna)
+
+
+### What is Keras?
+
+Keras is a high-level neural networks API, written in Python and capable of running on top of TensorFlow, CNTK, or Theano.
+
+See:
+
+https://github.com/keras-team/keras
+
+https://keras.io/
+
 
 ### What is Optuna?
 
 Optuna is an automatic hyperparameter optimization software framework, particularly designed for machine learning. 
 
-Find details at:
+See:
 	
 https://optuna.org/
 
@@ -14,16 +26,6 @@ https://github.com/pfnet/optuna
 
 https://optuna.readthedocs.io/en/latest/index.html
 
-
-### What is Keras?
-
-Keras is a high-level neural networks API, written in Python and capable of running on top of TensorFlow, CNTK, or Theano.
-
-Find details at:
-
-https://github.com/keras-team/keras
-
-https://keras.io/
 
 
 
