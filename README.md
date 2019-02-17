@@ -8,11 +8,11 @@ Optuna is an automatic hyperparameter optimization software framework, particula
 
 Find details at:
 	
-	https://optuna.org/
-	
-	https://github.com/pfnet/optuna
+https://optuna.org/
 
-	https://optuna.readthedocs.io/en/latest/index.html
+https://github.com/pfnet/optuna
+
+https://optuna.readthedocs.io/en/latest/index.html
 
 
 ### What is Keras?
@@ -21,9 +21,9 @@ Keras is a high-level neural networks API, written in Python and capable of runn
 
 Find details at:
 
-	https://github.com/keras-team/keras
+https://github.com/keras-team/keras
 
-	https://keras.io/
+https://keras.io/
 
 
 
@@ -72,12 +72,13 @@ Option 2: clone this GitHub repository, cd into the downloaded repository, and r
 
 	
 #### 3. Run optimize
+
   You can specify arguments for Optuna's optimize method.
     
     ok.optimize(objective, n_trials=10, timeout=12*60*60)
 
   
-Please see the example notebook (.ipynb) in "examples" folder.
+Please see the examples at https://github.com/Minyus/optkeras/tree/master/examples.
 
 
 ### Parameaters for OptKeras
@@ -112,31 +113,55 @@ Please see the example notebook (.ipynb) in "examples" folder.
 Current version of Optuna supports minimization but not maximization. 
 This becomes a problem to use Optuna's pruning feature based on accuracy value (an objective to maximize) as Keras does not log error (= 1 - accuracy) in the default callback. OptKeras calculates error and val_error from acc and val_acc, respectively, in a Keras callback so Optuna can use it. 
 
-### Why does the developer believe OptKeras is better than other the Python wrappers of Keras to optimize hyperparameters?
+### Why does the developer believe OptKeras is better than the other Python wrappers of Keras to optimize hyperparameters?
 
-1. Optuna has pruning option which can stop trials early based on the the interim objective (error rate, loss, etc. to minimize) values.  
-OptKeras can leverage this Optuna's option. If enable_pruning = True, OptKeras can stop training models (after the first epoch at the earliest) if the interim objective values are not good. Optuna's pruning algorithm is "smarter" than Early-Stopping callback of Keras. (If you disagree, please share the evidence. I'm interested.) 
+1. Optuna has pruning option which can stop trials early based on the the interim objective (error rate, loss, etc. to minimize) values.  OptKeras can leverage this Optuna's option. If enable_pruning = True, OptKeras can stop training models (after the first epoch at the earliest) if the interim objective values are not good. Optuna's pruning algorithm is "smarter" than Early-Stopping callback of Keras. (If you disagree, please share the evidence. I'm interested.) 
   
-2. Optuna manages logs in database using SQLAlchemy (https://www.sqlalchemy.org/) and can resume trials if it is saved as a database file. 
+2. Optuna manages logs in database using SQLAlchemy (https://www.sqlalchemy.org/) and can resume trials if it is saved as a database file. OptKeras can leverage this Optuna's option.
 
-3. OptKeras save both the Keras model files (or only the best Keras model) and CSV logs.
+3. OptKeras can log metrics (accuracy, loss, and error for train and test datasets) with trial id and timestamp (begin and end) for each epoch to a CSV file.
+
+4. OptKeras can save the Keras model files (only the best Keras model or all the models) with trial id in its file name so you can link to the log.
+
+5. OptKeras supports grid search useful for benchmarking in addition to optimization.
 
 ### Will OptKeras limit features of Keras or Optuna?
 
-No. You can access the full feaures of Keras and Optuna even if OptKeras is used. 
+Not at all! You can access the full feaures of Keras and Optuna even if OptKeras is used. 
 
 ### What was the tested environment for OptKeras?
 
-	Google Colaboratory with GPU enabled
-	NVIDIA Tesla K80
-	Driver Version: 410.79 
-	CUDA Version: 10.0
-	Ubuntu 18.04.1 LTS
-	Python 3.6.7
-	Keras 2.2.4
-	TensorFlow 1.13.0-rc1
-	Optuna 0.7.0
-	OptKeras 0.0.1
+Google Colaboratory with GPU enabled
+
+NVIDIA Tesla K80
+
+Driver Version: 410.79 
+
+CUDA Version: 10.0
+
+Ubuntu 18.04.1 LTS
+
+Python 3.6.7
+
+Keras 2.2.4
+
+TensorFlow 1.13.0-rc1
+
+Optuna 0.7.0
+
+OptKeras 0.0.1
+
+### About author 
+
+Yusuke Minami
+
+https://github.com/Minyus
+
+https://www.linkedin.com/in/yusukeminami/
+
+https://twitter.com/Minyus86
+
 
 ### License
+
 MIT License (see https://github.com/Minyus/optkeras/blob/master/LICENSE).
