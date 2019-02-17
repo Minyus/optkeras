@@ -1,6 +1,6 @@
 # OptKeras
 
-A Python package designed to optimize hyperparameters of Deep Learning models (a wrapper of Keras and Optuna)
+A Python package designed to optimize hyperparameters of Deep Learning models (a wrapper around Keras and Optuna)
 
 
 ### What is Keras?
