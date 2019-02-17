@@ -8,11 +8,11 @@ Optuna is an automatic hyperparameter optimization software framework, particula
 
 Find details at:
 	
-	https://optuna.org/
-	
-	https://github.com/pfnet/optuna
+https://optuna.org/
 
-	https://optuna.readthedocs.io/en/latest/index.html
+https://github.com/pfnet/optuna
+
+https://optuna.readthedocs.io/en/latest/index.html
 
 
 ### What is Keras?
@@ -21,9 +21,9 @@ Keras is a high-level neural networks API, written in Python and capable of runn
 
 Find details at:
 
-	https://github.com/keras-team/keras
+https://github.com/keras-team/keras
 
-	https://keras.io/
+https://keras.io/
 
 
 
@@ -131,26 +131,26 @@ Not at all! You can access the full feaures of Keras and Optuna even if OptKeras
 
 ### What was the tested environment for OptKeras?
 
-	Google Colaboratory with GPU enabled
-	NVIDIA Tesla K80
-	Driver Version: 410.79 
-	CUDA Version: 10.0
-	Ubuntu 18.04.1 LTS
-	Python 3.6.7
-	Keras 2.2.4
-	TensorFlow 1.13.0-rc1
-	Optuna 0.7.0
-	OptKeras 0.0.1
+Google Colaboratory with GPU enabled
+NVIDIA Tesla K80
+Driver Version: 410.79 
+CUDA Version: 10.0
+Ubuntu 18.04.1 LTS
+Python 3.6.7
+Keras 2.2.4
+TensorFlow 1.13.0-rc1
+Optuna 0.7.0
+OptKeras 0.0.1
 
 ### About author 
 
 Yusuke Minami
 
-	https://github.com/Minyus
+https://github.com/Minyus
 
-	https://www.linkedin.com/in/yusukeminami/
+https://www.linkedin.com/in/yusukeminami/
 
-	https://twitter.com/Minyus86
+https://twitter.com/Minyus86
 
 
 ### License
