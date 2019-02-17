@@ -78,7 +78,7 @@ Option 2: clone this GitHub repository, cd into the downloaded repository, and r
     ok.optimize(objective, n_trials=10, timeout=12*60*60)
 
   
-Please see the example notebook (.ipynb) in "examples" folder.
+Please see the examples at https://github.com/Minyus/optkeras/tree/master/examples.
 
 
 ### Parameaters for OptKeras
@@ -146,11 +146,11 @@ Not at all! You can access the full feaures of Keras and Optuna even if OptKeras
 
 Yusuke Minami
 
-https://github.com/Minyus
+	https://github.com/Minyus
 
-https://www.linkedin.com/in/yusukeminami/
+	https://www.linkedin.com/in/yusukeminami/
 
-https://twitter.com/Minyus86
+	https://twitter.com/Minyus86
 
 
 ### License
