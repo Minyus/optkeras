@@ -115,9 +115,9 @@ This becomes a problem to use Optuna's pruning feature based on accuracy value (
 
 ### Why does the developer believe OptKeras is better than the other Python wrappers of Keras to optimize hyperparameters?
 
-1. Optuna has pruning option which can stop trials early based on the the interim objective (error rate, loss, etc. to minimize) values.  OptKeras can leverage this Optuna's option. If enable_pruning = True, OptKeras can stop training models (after the first epoch at the earliest) if the interim objective values are not good. Optuna's pruning algorithm is "smarter" than Early-Stopping callback of Keras. (If you disagree, please share the evidence. I'm interested.) 
+1. Optuna supports pruning option which can stop trials early based on the the interim objective values (error rate, loss, etc.). See https://optuna.org/#key_features . OptKeras can leverage Optuna's pruning option. If enable_pruning = True, OptKeras can stop training models (after the first epoch at the earliest) if the performance in early epochs are not good. Optuna's pruning algorithm is apparently "smarter" than Early-Stopping callback of Keras. Please note that some models which will achieve better performance later might be pruned due to bad performance in early epochs. It might be better to enable pruning in early phase of optimization for rough search and disable pruning in later phase.
   
-2. Optuna manages logs in database using SQLAlchemy (https://www.sqlalchemy.org/) and can resume trials if it is saved as a database file. OptKeras can leverage this Optuna's option.
+2. Optuna manages logs in database using SQLAlchemy (https://www.sqlalchemy.org/) and can resume trials after interruption, even after the machine is rebooted (after 90 mininutes of inactivity or 12 hours of runtime of Google Colab) if the databse is saved as a storage file. OptKeras can leverage this feature.
 
 3. OptKeras can log metrics (accuracy, loss, and error for train and test datasets) with trial id and timestamp (begin and end) for each epoch to a CSV file.
 
