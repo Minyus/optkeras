@@ -13,7 +13,7 @@ Keras (https://keras.io/) is a high-level neural networks API, written in Python
 Optuna (https://optuna.org/) is an automatic hyperparameter optimization software framework, particularly designed for machine learning. 
 
 
-### What is the advantage of OptKeras against the other Python wrappers of Keras to optimize hyperparameters of Deep Learning models?
+### What are the advantages of OptKeras against the other Python wrappers of Keras to optimize hyperparameters of Deep Learning models?
 
 1. Optuna supports pruning option which can stop trials early based on the the interim objective values (error rate, loss, etc.). See https://optuna.org/#key_features . OptKeras can leverage Optuna's pruning option. If enable_pruning = True, OptKeras can stop training models (after the first epoch at the earliest) if the performance in early epochs are not good. Optuna's pruning algorithm is apparently "smarter" than Early-Stopping callback of Keras. Please note that some models which will achieve better performance later might be pruned due to bad performance in early epochs. It might be better to enable pruning in early phase of optimization for rough search and disable pruning in later phase.
   
