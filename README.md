@@ -38,7 +38,7 @@ Option 1: directly install from the GitHub repository
 	pip install git+https://github.com/Minyus/optkeras.git
 
 
-Option 2: clone this GitHub repository, cd into the downloaded repository, and run:
+Option 2: clone the GitHub repository (https://github.com/Minyus/optkeras.git), cd into the downloaded repository, and run:
 
 	python setup.py install
 
