@@ -15,15 +15,11 @@ A Python package designed to optimize hyperparameters of Deep Learning models (a
 
 ### What are the advantages of OptKeras against the other Python wrappers of Keras to optimize hyperparameters of Deep Learning models?
 
-1. Optuna supports pruning option which can stop trials early based on the the interim objective values (error rate, loss, etc.). See https://optuna.org/#key_features . OptKeras can leverage Optuna's pruning option. If enable_pruning = True, OptKeras can stop training models (after the first epoch at the earliest) if the performance in early epochs are not good. Optuna's pruning algorithm is apparently "smarter" than Early-Stopping callback of Keras. Please note that some models which will achieve better performance later might be pruned due to bad performance in early epochs. It might be better to enable pruning in early phase of optimization for rough search and disable pruning in later phase.
-  
-2. Optuna manages logs in database using [SQLAlchemy](https://www.sqlalchemy.org/) and can resume trials after interruption, even after the machine is rebooted (after 90 minutes of inactivity or 12 hours of runtime of Google Colab) if the databse is saved as a storage file. OptKeras can leverage this feature.
-
-3. OptKeras can log metrics (accuracy, loss, and error for train and test datasets) with trial id and timestamp (begin and end) for each epoch to a CSV file.
-
-4. OptKeras can save the Keras model files (only the best Keras model or all the models) with trial id in its file name so you can link to the log.
-
-5. OptKeras supports grid search useful for benchmarking in addition to optimization.
+- Optuna supports pruning option which can stop trials early based on the the interim objective values (error rate, loss, etc.). See https://optuna.org/#key_features . OptKeras can leverage Optuna's pruning option. If enable_pruning = True, OptKeras can stop training models (after the first epoch at the earliest) if the performance in early epochs are not good. Optuna's pruning algorithm is apparently "smarter" than Early-Stopping callback of Keras. Please note that some models which will achieve better performance later might be pruned due to bad performance in early epochs. It might be better to enable pruning in early phase of optimization for rough search and disable pruning in later phase.
+- Optuna manages logs in database using [SQLAlchemy](https://www.sqlalchemy.org/) and can resume trials after interruption, even after the machine is rebooted (after 90 minutes of inactivity or 12 hours of runtime of Google Colab) if the databse is saved as a storage file. OptKeras can leverage this feature.
+- OptKeras can log metrics (accuracy, loss, and error for train and test datasets) with trial id and timestamp (begin and end) for each epoch to a CSV file.
+- OptKeras can save the Keras model files (only the best Keras model or all the models) with trial id in its file name so you can link to the log.
+- OptKeras supports grid search useful for benchmarking in addition to optimization.
 
 
 ### How to install OptKeras?
@@ -80,7 +76,8 @@ Option 2: clone the GitHub repository (https://github.com/Minyus/optkeras.git), 
 ```python
 	ok.optimize(objective, n_trials=10, timeout=12*60*60)
 ```
-  
+
+
 Please see the examples at https://github.com/Minyus/optkeras/blob/master/examples/OptKeras_Example.ipynb .
 
 
@@ -143,9 +140,7 @@ See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.cr
 Yusuke Minami
 
 - https://github.com/Minyus
-
 - https://www.linkedin.com/in/yusukeminami/
-
 - https://twitter.com/Minyus86
 
 
