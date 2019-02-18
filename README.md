@@ -5,32 +5,28 @@ A Python package designed to optimize hyperparameters of Deep Learning models (a
 
 ### What is Keras?
 
-Keras is a high-level neural networks API, written in Python and capable of running on top of TensorFlow, CNTK, or Theano.
-
-See:
-
-https://github.com/keras-team/keras
-
-https://keras.io/
+Keras (https://keras.io/) is a high-level neural networks API, written in Python and capable of running on top of TensorFlow, CNTK, or Theano.
 
 
 ### What is Optuna?
 
-Optuna is an automatic hyperparameter optimization software framework, particularly designed for machine learning. 
-
-See:
-	
-https://optuna.org/
-
-https://github.com/pfnet/optuna
-
-https://optuna.readthedocs.io/en/latest/index.html
+Optuna (https://optuna.org/) is an automatic hyperparameter optimization software framework, particularly designed for machine learning. 
 
 
+### What is the advantage of OptKeras against the other Python wrappers of Keras to optimize hyperparameters of Deep Learning models?
+
+1. Optuna supports pruning option which can stop trials early based on the the interim objective values (error rate, loss, etc.). See https://optuna.org/#key_features . OptKeras can leverage Optuna's pruning option. If enable_pruning = True, OptKeras can stop training models (after the first epoch at the earliest) if the performance in early epochs are not good. Optuna's pruning algorithm is apparently "smarter" than Early-Stopping callback of Keras. Please note that some models which will achieve better performance later might be pruned due to bad performance in early epochs. It might be better to enable pruning in early phase of optimization for rough search and disable pruning in later phase.
+  
+2. Optuna manages logs in database using SQLAlchemy (https://www.sqlalchemy.org/) and can resume trials after interruption, even after the machine is rebooted (after 90 minutes of inactivity or 12 hours of runtime of Google Colab) if the databse is saved as a storage file. OptKeras can leverage this feature.
+
+3. OptKeras can log metrics (accuracy, loss, and error for train and test datasets) with trial id and timestamp (begin and end) for each epoch to a CSV file.
+
+4. OptKeras can save the Keras model files (only the best Keras model or all the models) with trial id in its file name so you can link to the log.
+
+5. OptKeras supports grid search useful for benchmarking in addition to optimization.
 
 
 ### How to install OptKeras?
-
 
 Option 1: directly install from the GitHub repository
 
@@ -80,10 +76,21 @@ Option 2: clone the GitHub repository (https://github.com/Minyus/optkeras.git), 
     ok.optimize(objective, n_trials=10, timeout=12*60*60)
 
   
-Please see the examples at https://github.com/Minyus/optkeras/tree/master/examples.
+Please see the examples at https://github.com/Minyus/optkeras/blob/master/examples/OptKeras_Example.ipynb .
 
 
-### Parameaters for OptKeras
+### Why OptKeras was developed?
+
+Current version of Optuna supports minimization but not maximization. 
+This becomes a problem to use Optuna's pruning feature based on accuracy value (an objective to maximize) as Keras does not log error (= 1 - accuracy) in the default callback. OptKeras calculates error and val_error from acc and val_acc, respectively, in a Keras callback so Optuna can use it. 
+
+
+### Will OptKeras limit features of Keras or Optuna?
+
+Not at all! You can access the full feaures of Keras and Optuna even if OptKeras is used. 
+
+
+### What parameaters are available for OptKeras?
 
             monitor: The metric to optimize by Optuna. 'val_error' in default or 'val_loss'.
             enable_pruning: Enable pruning by Optuna. False in default.
@@ -111,25 +118,6 @@ Please see the examples at https://github.com/Minyus/optkeras/tree/master/exampl
                 study_name, storage, sampler=None, pruner=None, direction='minimize'
                 See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.create_study
 
-### Why OptKeras was developed?
-Current version of Optuna supports minimization but not maximization. 
-This becomes a problem to use Optuna's pruning feature based on accuracy value (an objective to maximize) as Keras does not log error (= 1 - accuracy) in the default callback. OptKeras calculates error and val_error from acc and val_acc, respectively, in a Keras callback so Optuna can use it. 
-
-### Why does the developer believe OptKeras is better than the other Python wrappers of Keras to optimize hyperparameters?
-
-1. Optuna supports pruning option which can stop trials early based on the the interim objective values (error rate, loss, etc.). See https://optuna.org/#key_features . OptKeras can leverage Optuna's pruning option. If enable_pruning = True, OptKeras can stop training models (after the first epoch at the earliest) if the performance in early epochs are not good. Optuna's pruning algorithm is apparently "smarter" than Early-Stopping callback of Keras. Please note that some models which will achieve better performance later might be pruned due to bad performance in early epochs. It might be better to enable pruning in early phase of optimization for rough search and disable pruning in later phase.
-  
-2. Optuna manages logs in database using SQLAlchemy (https://www.sqlalchemy.org/) and can resume trials after interruption, even after the machine is rebooted (after 90 minutes of inactivity or 12 hours of runtime of Google Colab) if the databse is saved as a storage file. OptKeras can leverage this feature.
-
-3. OptKeras can log metrics (accuracy, loss, and error for train and test datasets) with trial id and timestamp (begin and end) for each epoch to a CSV file.
-
-4. OptKeras can save the Keras model files (only the best Keras model or all the models) with trial id in its file name so you can link to the log.
-
-5. OptKeras supports grid search useful for benchmarking in addition to optimization.
-
-### Will OptKeras limit features of Keras or Optuna?
-
-Not at all! You can access the full feaures of Keras and Optuna even if OptKeras is used. 
 
 ### What was the tested environment for OptKeras?
 
