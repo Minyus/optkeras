@@ -31,13 +31,13 @@ Optuna (https://optuna.org/) is an automatic hyperparameter optimization softwar
 Option 1: directly install from the GitHub repository
 
 ```
-pip install git+https://github.com/Minyus/optkeras.git
+	pip install git+https://github.com/Minyus/optkeras.git
 ```
 
 Option 2: clone the GitHub repository (https://github.com/Minyus/optkeras.git), cd into the downloaded repository, and run:
 
 ```
-python setup.py install
+	python setup.py install
 ```
 
 ### How to use OptKeras?
@@ -46,7 +46,7 @@ python setup.py install
 #### 0. Import OptKeras class
 
 ```
-from optkeras.optkeras import OptKeras
+	from optkeras.optkeras import OptKeras
 ```
     
 #### 1. Instantiate OptKeras class
@@ -54,7 +54,7 @@ from optkeras.optkeras import OptKeras
   You can specify arguments for Optuna's create_study method and other arguments for OptKeras such as enable_pruning.
   
 ```
-ok = OptKeras(study_name = 'my_optimization', enable_pruning=False)
+	ok = OptKeras(study_name = 'my_optimization', enable_pruning=False)
 ```
 
 #### 2. Define objective function for Optuna
@@ -62,23 +62,23 @@ ok = OptKeras(study_name = 'my_optimization', enable_pruning=False)
 ##### 2.1 Specify callbacks(trial) and keras_verbose to fit (or fit_generator) method of Keras
 
 ```
-    model.fit(x_train, y_train, 
-        validation_data = (x_test, y_test),
-        callbacks = ok.callbacks(trial), 
-        verbose = ok.keras_verbose )
+    	model.fit(x_train, y_train, 
+		validation_data = (x_test, y_test),
+		callbacks = ok.callbacks(trial), 
+		verbose = ok.keras_verbose )
 ```
 
 ##### 2.2 Return trial_best_value from OptKeras
   
 ```
-    return ok.trial_best_value
+	return ok.trial_best_value
 ```
 	
 #### 3. Run optimize
 
   You can specify arguments for Optuna's optimize method.
 ```
-ok.optimize(objective, n_trials=10, timeout=12*60*60)
+	ok.optimize(objective, n_trials=10, timeout=12*60*60)
 ```
   
 Please see the examples at https://github.com/Minyus/optkeras/blob/master/examples/OptKeras_Example.ipynb .
@@ -128,16 +128,16 @@ Not at all! You can access the full feaures of Keras and Optuna even if OptKeras
 ### What was the tested environment for OptKeras?
 
 ```
-Google Colaboratory with GPU enabled
-NVIDIA Tesla K80
-Driver Version: 410.79 
-CUDA Version: 10.0
-Ubuntu 18.04.1 LTS
-Python 3.6.7
-Keras 2.2.4
-TensorFlow 1.13.0-rc1
-Optuna 0.7.0
-OptKeras 0.0.1
+	Google Colaboratory with GPU enabled
+	NVIDIA Tesla K80
+	Driver Version: 410.79 
+	CUDA Version: 10.0
+	Ubuntu 18.04.1 LTS
+	Python 3.6.7
+	Keras 2.2.4
+	TensorFlow 1.13.0-rc1
+	Optuna 0.7.0
+	OptKeras 0.0.1
 ```
 
 ### About author 
