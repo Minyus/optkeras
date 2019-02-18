@@ -30,51 +30,56 @@ Optuna (https://optuna.org/) is an automatic hyperparameter optimization softwar
 
 Option 1: directly install from the GitHub repository
 
-
-	pip install git+https://github.com/Minyus/optkeras.git
-
+```
+pip install git+https://github.com/Minyus/optkeras.git
+```
 
 Option 2: clone the GitHub repository (https://github.com/Minyus/optkeras.git), cd into the downloaded repository, and run:
 
-	python setup.py install
-
+```
+python setup.py install
+```
 
 ### How to use OptKeras?
 
 
 #### 0. Import OptKeras class
 
-    from optkeras.optkeras import OptKeras
+```
+from optkeras.optkeras import OptKeras
+```
     
 #### 1. Instantiate OptKeras class
 	
   You can specify arguments for Optuna's create_study method and other arguments for OptKeras such as enable_pruning.
   
-    ok = OptKeras(study_name = 'my_optimization', enable_pruning=False)
-
+```
+ok = OptKeras(study_name = 'my_optimization', enable_pruning=False)
+```
 
 #### 2. Define objective function for Optuna
 
 ##### 2.1 Specify callbacks(trial) and keras_verbose to fit (or fit_generator) method of Keras
-  
+
+```
     model.fit(x_train, y_train, 
         validation_data = (x_test, y_test),
         callbacks = ok.callbacks(trial), 
         verbose = ok.keras_verbose )
-
+```
 
 ##### 2.2 Return trial_best_value from OptKeras
   
-
+```
     return ok.trial_best_value
-
+```
 	
 #### 3. Run optimize
 
   You can specify arguments for Optuna's optimize method.
-    
-    ok.optimize(objective, n_trials=10, timeout=12*60*60)
-
+```
+ok.optimize(objective, n_trials=10, timeout=12*60*60)
+```
   
 Please see the examples at https://github.com/Minyus/optkeras/blob/master/examples/OptKeras_Example.ipynb .
 
@@ -92,45 +97,48 @@ Not at all! You can access the full feaures of Keras and Optuna even if OptKeras
 
 ### What parameaters are available for OptKeras?
 
-            monitor: The metric to optimize by Optuna. 'val_error' in default or 'val_loss'.
-            enable_pruning: Enable pruning by Optuna. False in default.
-                See https://optuna.readthedocs.io/en/latest/tutorial/pruning.html
-            enable_keras_log: Enable logging by Keras CSVLogger callback. True in default.
-                See https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/CSVLogger
-            keras_log_file_suffix: Suffix of the file if enable_keras_log is True.
-                '_Keras.csv' in default.
-            enable_optuna_log: Enable generating a log file by Optuna study.trials_dataframe().
-                True in default.
-                See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.Study.trials_dataframe
-            optuna_log_file_suffix: Suffix of the file if enable_optuna_log is True.
-            models_to_keep: The number of models to keep.
-                Either 1 in default , 0, or -1 (save all models).
-            model_file_prefix: Prefix of the model file path if models_to_keep is not 0.
-                'model_' in default.
-            model_file_suffix: Suffix of the model file path if models_to_keep is not 0.
-                '.hdf5' in default.
-            directory_path: The path of the directory for the files.
-                '' (Current working directory) in default.
-            verbose: How much to print messages onto the screen.
-                0 (no messages), 1 in default, 2 (troubleshooting)
-            grid_search_mode: Run grid search instead of optimization. False in default.
-            **kwargs: parameters for optuna.study.create_study():
-                study_name, storage, sampler=None, pruner=None, direction='minimize'
-                See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.create_study
-
+```
+    monitor: The metric to optimize by Optuna. 'val_error' in default or 'val_loss'.
+    enable_pruning: Enable pruning by Optuna. False in default.
+	See https://optuna.readthedocs.io/en/latest/tutorial/pruning.html
+    enable_keras_log: Enable logging by Keras CSVLogger callback. True in default.
+	See https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/CSVLogger
+    keras_log_file_suffix: Suffix of the file if enable_keras_log is True.
+	'_Keras.csv' in default.
+    enable_optuna_log: Enable generating a log file by Optuna study.trials_dataframe().
+	True in default.
+	See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.Study.trials_dataframe
+    optuna_log_file_suffix: Suffix of the file if enable_optuna_log is True.
+    models_to_keep: The number of models to keep.
+	Either 1 in default , 0, or -1 (save all models).
+    model_file_prefix: Prefix of the model file path if models_to_keep is not 0.
+	'model_' in default.
+    model_file_suffix: Suffix of the model file path if models_to_keep is not 0.
+	'.hdf5' in default.
+    directory_path: The path of the directory for the files.
+	'' (Current working directory) in default.
+    verbose: How much to print messages onto the screen.
+	0 (no messages), 1 in default, 2 (troubleshooting)
+    grid_search_mode: Run grid search instead of optimization. False in default.
+    **kwargs: parameters for optuna.study.create_study():
+	study_name, storage, sampler=None, pruner=None, direction='minimize'
+	See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.create_study
+```
 
 ### What was the tested environment for OptKeras?
 
-	Google Colaboratory with GPU enabled
-	NVIDIA Tesla K80
-	Driver Version: 410.79 
-	CUDA Version: 10.0
-	Ubuntu 18.04.1 LTS
-	Python 3.6.7
-	Keras 2.2.4
-	TensorFlow 1.13.0-rc1
-	Optuna 0.7.0
-	OptKeras 0.0.1
+```
+Google Colaboratory with GPU enabled
+NVIDIA Tesla K80
+Driver Version: 410.79 
+CUDA Version: 10.0
+Ubuntu 18.04.1 LTS
+Python 3.6.7
+Keras 2.2.4
+TensorFlow 1.13.0-rc1
+Optuna 0.7.0
+OptKeras 0.0.1
+```
 
 ### About author 
 
