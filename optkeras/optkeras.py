@@ -47,7 +47,7 @@ class OptKeras(Callback):
                 '' (Current working directory) in default.
             verbose: How much to print messages onto the screen.
                 0 (no messages), 1 in default, 2 (troubleshooting)
-            random_grid_search_mode: Run grid search instead of optimization. False in default.
+            random_grid_search_mode: Run randomized grid search instead of optimization. False in default.
             **kwargs: parameters for optuna.study.create_study():
                 study_name, storage, sampler=None, pruner=None, direction='minimize'
                 See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.create_study
