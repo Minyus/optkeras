@@ -41,6 +41,18 @@ Option 2: clone the GitHub repository (https://github.com/Minyus/optkeras.git), 
 Here is the basic example.
 
 ```python
+""" Step 0. Import Keras, Optuna, and OptKeras """
+
+from keras.models import Sequential
+from keras.layers import Flatten, Dense, Conv2D
+from keras.optimizers import Adam
+import keras.backend as K
+
+import optuna
+
+from optkeras.optkeras import OptKeras
+
+
 study_name = dataset_name + '_Simple'
 
 """ Step 1. Instantiate OptKeras class
