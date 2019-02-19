@@ -38,48 +38,64 @@ Option 2: clone the GitHub repository (https://github.com/Minyus/optkeras.git), 
 
 ### How to use OptKeras?
 
-
-#### 0. Import OptKeras class
+Here is the basic example.
 
 ```python
-	from optkeras.optkeras import OptKeras
-```
+study_name = dataset_name + '_Simple'
+
+""" Step 1. Instantiate OptKeras class
+You can specify arguments for Optuna's create_study method and other arguments 
+for OptKeras such as enable_pruning. 
+"""
+
+ok = OptKeras(study_name=study_name)
+
+
+""" Step 2. Define objective function for Optuna """
+
+def objective(trial):
     
-#### 1. Instantiate OptKeras class
-	
-  You can specify arguments for Optuna's create_study method and other arguments for OptKeras such as enable_pruning.
-  
-```python
-	ok = OptKeras(study_name = 'my_optimization', enable_pruning=False)
+    """ Clear the backend (TensorFlow). See:
+    https://www.tensorflow.org/api_docs/python/tf/keras/backend/clear_session
+    """
+    K.clear_session() 
+    
+    """ Step 2.1. Define parameters to try using methods of optuna.trial such as 
+    suggest_categorical. In this simple demo, try 2*2*2*2 = 16 parameter sets: 
+    2 values specified in list for each of 4 parameters 
+    (filters, kernel_size, strides, and activation for convolution).
+    """    
+    model = Sequential()
+    model.add(Conv2D(
+        filters = trial.suggest_categorical('filters', [32, 64]), 
+        kernel_size = trial.suggest_categorical('kernel_size', [3, 5]), 
+        strides = trial.suggest_categorical('strides', [1, 2]), 
+        activation = trial.suggest_categorical('activation', ['relu', 'linear']), 
+        input_shape = input_shape ))
+    model.add(Flatten())
+    model.add(Dense(num_classes, activation='softmax'))
+    model.compile(optimizer = Adam(), 
+                loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+    
+    """ Step 2.2. Specify callbacks(trial) and keras_verbose in fit 
+    (or fit_generator) method of Keras model
+    """
+    model.fit(x_train, y_train, 
+              validation_data = (x_test, y_test), shuffle = True,
+              batch_size = 512, epochs = 2,
+              callbacks = ok.callbacks(trial), 
+              verbose = ok.keras_verbose )  
+    
+    """ Step 2.3. Return trial_best_value (or latest_value) """
+    return ok.trial_best_value
+
+""" Step 3. Run optimize. 
+Set n_trials and/or timeout (in sec) for optimization by Optuna
+"""
+ok.optimize(objective, timeout = 60) # 1 minute for demo
 ```
 
-#### 2. Define objective function for Optuna
-
-##### 2.1 Specify callbacks(trial) and keras_verbose to fit (or fit_generator) method of Keras
-
-```python
-    	model.fit(x_train, y_train, 
-		validation_data = (x_test, y_test),
-		callbacks = ok.callbacks(trial), 
-		verbose = ok.keras_verbose )
-```
-
-##### 2.2 Return trial_best_value from OptKeras
-  
-```python
-	return ok.trial_best_value
-```
-	
-#### 3. Run optimize
-
-  You can specify arguments for Optuna's optimize method.
-```python
-	ok.optimize(objective, n_trials=10, timeout=12*60*60)
-```
-
-
-Please see the examples at https://github.com/Minyus/optkeras/blob/master/examples/OptKeras_Example.ipynb .
-
+Please see the complete examples at https://github.com/Minyus/optkeras/blob/master/examples/OptKeras_Example.ipynb .
 
 ### Why OptKeras was developed?
 
