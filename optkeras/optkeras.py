@@ -22,7 +22,7 @@ class OptKeras(Callback):
                  model_file_suffix = '.hdf5',
                  directory_path = '',
                  verbose = 1,
-                 grid_search_mode = False,
+                 random_grid_search_mode = False,
                  **kwargs):
         """ Wrapper of optuna.create_study
         Args:
@@ -47,13 +47,13 @@ class OptKeras(Callback):
                 '' (Current working directory) in default.
             verbose: How much to print messages onto the screen.
                 0 (no messages), 1 in default, 2 (troubleshooting)
-            grid_search_mode: Run grid search instead of optimization. False in default.
+            random_grid_search_mode: Run grid search instead of optimization. False in default.
             **kwargs: parameters for optuna.study.create_study():
                 study_name, storage, sampler=None, pruner=None, direction='minimize'
                 See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.create_study
         """
-        self.grid_search_mode = grid_search_mode
-        if self.grid_search_mode:
+        self.random_grid_search_mode = random_grid_search_mode
+        if self.random_grid_search_mode:
             kwargs.setdefault('sampler', optuna.samplers.RandomSampler())
             kwargs.setdefault('pruner', RepeatPruner())
             enable_pruning = True
@@ -266,7 +266,7 @@ class OptKeras(Callback):
         # (logs include timestamp, monitor, val_acc, val_error, val_loss)
         self.save_logs_as_optuna_attributes()
 
-    def grid_search(self, func, n_trials, **kwargs):
+    def random_grid_search(self, func, n_trials, **kwargs):
         """ Grid search
         Args:
             func: A callable that implements objective function.
