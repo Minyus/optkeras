@@ -19,7 +19,7 @@ A Python package designed to optimize hyperparameters of Deep Learning models (a
 - Optuna manages logs in database using [SQLAlchemy](https://www.sqlalchemy.org/) and can resume trials after interruption, even after the machine is rebooted (after 90 minutes of inactivity or 12 hours of runtime of Google Colab) if the databse is saved as a storage file. OptKeras can leverage this feature.
 - OptKeras can log metrics (accuracy, loss, and error for train and test datasets) with trial id and timestamp (begin and end) for each epoch to a CSV file.
 - OptKeras can save the Keras model files (only the best Keras model or all the models) with trial id in its file name so you can link to the log.
-- OptKeras supports grid search useful for benchmarking in addition to optimization.
+- OptKeras supports randomized grid search (randomized search by sampling parameter sets without replacement; grid search in a randomized order) useful if your primary purpose is benchmarking/comparison rather than optimization. 
 
 
 ### How to install OptKeras?
@@ -132,7 +132,7 @@ Either 1 in default , 0, or -1 (save all models).
 '' (Current working directory) in default.
 - verbose: How much to print messages onto the screen.
 0 (no messages), 1 in default, 2 (troubleshooting)
-- grid_search_mode: Run grid search instead of optimization. False in default.
+- random_grid_search_mode: Run randomized grid search instead of optimization. False in default.
 - **kwargs: parameters for optuna.study.create_study():
 study_name, storage, sampler=None, pruner=None, direction='minimize'
 See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.create_study
