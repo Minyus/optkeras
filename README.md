@@ -25,13 +25,19 @@ A Python package designed to optimize hyperparameters of Deep Neural Network mod
 
 ### How to install OptKeras?
 
-Option 1: directly install from the GitHub repository
+Option 1: install from the PyPI
+
+```bash
+	pip install optkeras
+```
+
+Option 2: install from the GitHub repository
 
 ```bash
 	pip install git+https://github.com/Minyus/optkeras.git
 ```
 
-Option 2: clone the GitHub repository (https://github.com/Minyus/optkeras.git), cd into the downloaded repository, and run:
+Option 3: clone the GitHub repository (https://github.com/Minyus/optkeras.git), cd into the downloaded repository, and run:
 
 ```bash
 	python setup.py install
