@@ -157,6 +157,9 @@ study_name, storage, sampler=None, pruner=None, direction='minimize'
 See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.create_study
 
 
+### Which version of Python is supported?
+Python 3
+
 ### What was the tested environment for OptKeras?
 
 - Google Colaboratory with GPU enabled
