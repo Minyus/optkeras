@@ -1,6 +1,9 @@
 # OptKeras
 
-A Python package designed to optimize hyperparameters of Deep Neural Network models (a wrapper around Keras and Optuna)
+[![PyPI version](https://badge.fury.io/py/optkeras.svg)](https://badge.fury.io/py/optkeras)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A Python package designed to optimize hyperparameters of Keras Deep Learning models using Optuna. Essentially a wrapper of Keras and Optuna. Supported features include pruning, logging, and saving models.
 
 
 ### What is Keras?
@@ -25,13 +28,19 @@ A Python package designed to optimize hyperparameters of Deep Neural Network mod
 
 ### How to install OptKeras?
 
-Option 1: directly install from the GitHub repository
+Option 1: install from the PyPI
+
+```bash
+	pip install optkeras
+```
+
+Option 2: install from the GitHub repository
 
 ```bash
 	pip install git+https://github.com/Minyus/optkeras.git
 ```
 
-Option 2: clone the GitHub repository (https://github.com/Minyus/optkeras.git), cd into the downloaded repository, and run:
+Option 3: clone the GitHub repository (https://github.com/Minyus/optkeras.git), cd into the downloaded repository, and run:
 
 ```bash
 	python setup.py install
@@ -150,6 +159,9 @@ Either 1 in default , 0, or -1 (save all models).
 study_name, storage, sampler=None, pruner=None, direction='minimize'
 See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.create_study
 
+
+### Which version of Python is supported?
+Python 3
 
 ### What was the tested environment for OptKeras?
 
