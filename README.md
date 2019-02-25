@@ -1,9 +1,9 @@
-# OptKeras
+# OptKeras, a wrapper around Keras and Optuna
 
 [![PyPI version](https://badge.fury.io/py/optkeras.svg)](https://badge.fury.io/py/optkeras)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A Python package designed to optimize hyperparameters of Keras Deep Learning models using Optuna. Essentially a wrapper of Keras and Optuna. Supported features include pruning, logging, and saving models.
+A Python package designed to optimize hyperparameters of Keras Deep Learning models using Optuna. Supported features include pruning, logging, and saving models.
 
 
 ### What is Keras?
