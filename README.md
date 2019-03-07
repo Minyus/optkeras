@@ -166,7 +166,7 @@ See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.cr
 
 
 ### Which version of Python is supported?
-Python 3
+Python 3.5 or later
 
 ### What was the tested environment for OptKeras?
 
