@@ -127,8 +127,7 @@ ok.optimize(objective, timeout = 60) # 1 minute for demo
 
 ### Why OptKeras was developed?
 
-Current version of Optuna supports minimization but not maximization. 
-This becomes a problem to use Optuna's pruning feature based on accuracy value (an objective to maximize) as Keras does not log error (= 1 - accuracy) in the default callback. OptKeras calculates error and val_error from acc and val_acc, respectively, in a Keras callback so Optuna can use it. 
+Optuna 0.7.0 (released on 2019-01-24) supports minimization but not maximization. This becomes a problem when using Optuna's pruning feature based on accuracy value (an objective to maximize) as Keras does not log error (= 1 - accuracy) in the default callback. OptKeras calculates error and val_error from acc and val_acc, respectively, in a Keras callback so Optuna can use it. 
 
 
 ### Will OptKeras limit features of Keras or Optuna?
