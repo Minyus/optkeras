@@ -18,7 +18,7 @@ A Python package designed to optimize hyperparameters of Keras Deep Learning mod
 
 ### What are the advantages of OptKeras?
 
-- Optuna supports pruning option which can stop trials early based on the interim objective values (error rate, loss, etc.). See https://optuna.org/#key_features . OptKeras can leverage Optuna's pruning option. If enable_pruning = True, OptKeras can stop training models (after the first epoch at the earliest) if the performance in early epochs are not good. Optuna's pruning algorithm is apparently "smarter" than Early-Stopping callback of Keras. Please note that some models which will achieve better performance later might be pruned due to bad performance in early epochs. It might be better to enable pruning in early phase of optimization for rough search and disable pruning in later phase.
+- Optuna supports pruning option which can stop trials early based on the interim objective values (error rate, loss, etc.). Please see [Optuna's key features](https://optuna.org/#key_features). OptKeras can leverage Optuna's pruning option. If enable_pruning = True, OptKeras can stop training models (after the first epoch at the earliest) if the performance in early epochs are not good. Optuna's pruning algorithm is apparently "smarter" than Early-Stopping callback of Keras. Please note that some models which will achieve better performance later might be pruned due to bad performance in early epochs. It might be better to enable pruning in early phase of optimization for rough search and disable pruning in later phase.
 - Optuna manages logs in database using [SQLAlchemy](https://www.sqlalchemy.org/) and can resume trials after interruption, even after the machine is rebooted (after 90 minutes of inactivity or 12 hours of runtime of Google Colab) if the database is saved as a storage file. OptKeras can leverage this feature.
 - More epochs do not necessarily improve the performance of Deep Neural Network. OptKeras keeps the best value though epochs so it can be used as the final value.
 - OptKeras can log metrics (accuracy, loss, and error for train and test datasets) with trial id and timestamp (begin and end) for each epoch to a CSV file.
@@ -40,7 +40,7 @@ Option 2: install from the GitHub repository
 	pip install git+https://github.com/Minyus/optkeras.git
 ```
 
-Option 3: clone the GitHub repository (https://github.com/Minyus/optkeras.git), cd into the downloaded repository, and run:
+Option 3: clone the [GitHub repository](https://github.com/Minyus/optkeras.git), cd into the downloaded repository, and run:
 
 ```bash
 	python setup.py install
@@ -48,7 +48,15 @@ Option 3: clone the GitHub repository (https://github.com/Minyus/optkeras.git), 
 
 ### How to use OptKeras?
 
-Here is the basic example.
+Please see the [OptKeras example]( 
+https://github.com/Minyus/optkeras/blob/master/examples/OptKeras_Example.ipynb
+) .
+
+You can also open the copy with Google Colab (free cloud GPU) [here]( 
+https://colab.research.google.com/github/Minyus/optkeras/blob/master/examples/OptKeras_Example.ipynb
+) .
+
+Here are the basic steps to use.
 
 ```python
 """ Step 0. Import Keras, Optuna, and OptKeras """
@@ -116,8 +124,6 @@ Set n_trials and/or timeout (in sec) for optimization by Optuna
 """
 ok.optimize(objective, timeout = 60) # 1 minute for demo
 ```
-
-Please see the complete examples at https://github.com/Minyus/optkeras/blob/master/examples/OptKeras_Example.ipynb .
 
 ### Why OptKeras was developed?
 
