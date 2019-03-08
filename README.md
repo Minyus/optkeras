@@ -49,12 +49,12 @@ Option 3: clone the [GitHub repository](https://github.com/Minyus/optkeras.git),
 ### How to use OptKeras?
 
 Please see the [OptKeras example]( 
-https://github.com/Minyus/optkeras/blob/master/examples/OptKeras_Example.ipynb
-) .
-
-You can also open the copy with Google Colab (free cloud GPU) [here]( 
 https://colab.research.google.com/github/Minyus/optkeras/blob/master/examples/OptKeras_Example.ipynb
-) .
+) available in Google Colab (free cloud GPU) environment.
+
+To run the code, navigate to "Runtime" >> "Run all".
+
+To download the notebook file, navigate to "File" >> "Download .ipynb".
 
 Here are the basic steps to use.
 
