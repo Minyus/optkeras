@@ -2,6 +2,7 @@
 
 [![PyPI version](https://badge.fury.io/py/optkeras.svg)](https://badge.fury.io/py/optkeras)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Minyus/optkeras/blob/master/examples/OptKeras_Example.ipynb)
 
 A Python package designed to optimize hyperparameters of Keras Deep Learning models using Optuna. Supported features include pruning, logging, and saving models.
 
