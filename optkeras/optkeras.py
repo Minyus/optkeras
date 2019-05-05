@@ -93,7 +93,7 @@ class OptKeras(Callback):
             'Ready for optimization. (message printed as verbose is set to 1+)')
 
     def add_dir(self, suffix_str):
-        p = Path(self.directory) / (self.study_name + '_' + suffix_str)
+        p = Path(self.directory_path) / (self.study_name + '_' + suffix_str)
         return str(p)
 
     def optimize(self, *args, **kwargs):
