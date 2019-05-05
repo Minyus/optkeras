@@ -76,9 +76,9 @@ class OptKeras(Callback):
             self.minimizing_metric += '_Neg'
 
         self.latest_logs = {}
-        self.latest_value = self.default_value
+        self.latest_value = np.Inf
         self.trial_best_logs = {}
-        self.trial_best_value = self.default_value
+        self.trial_best_value = np.Inf
         self.enable_pruning = enable_pruning
         self.enable_keras_log = enable_keras_log
         self.enable_optuna_log = enable_optuna_log
@@ -87,10 +87,10 @@ class OptKeras(Callback):
         self.model_file_prefix = self.add_dir(model_file_prefix)
         self.model_file_suffix = model_file_suffix
         self.verbose = verbose
-        self.keras_verbose = max(self.verbose - 1 , 0) # decrement
+        self.keras_verbose = max(self.verbose - 1, 0) # decrement
         if self.verbose >= 1:
             print('[{}]'.format(self.get_datetime()),
-            'Ready for optimization. (message printed as verbose is set to 1+)')
+            '[OptKeras] Ready for optimization. (message printed as verbose is set to 1+)')
 
     def add_dir(self, suffix_str):
         p = Path(self.directory_path) / (self.study_name + '_' + suffix_str)
@@ -277,7 +277,7 @@ class OptKeras(Callback):
         update_best_logs(self.latest_logs, self.trial_best_logs,  
                          minimizing_metric=self.minimizing_metric)
         self.trial_best_value = \
-            self.trial_best_logs.get(self.monitor, self.default_value)        
+            self.trial_best_logs.get(self.monitor, np.Inf)
         # Recommended: save the logs from the best epoch as attributes
         # (logs include timestamp, monitor, val_acc, val_error, val_loss)
         self.save_logs_as_optuna_attributes()
