@@ -270,7 +270,7 @@ class OptKeras(Callback):
                              mode_max = False, default_value=np.Inf):
             latest = latest_logs.get(minimizing_metric, default_value)
             best = best_logs.get(minimizing_metric, default_value)
-            if update_flag(latest, best, mode_max = mode_max):
+            if update_flag(latest, best):
                 best_logs.update(latest_logs)
         self.latest_logs = logs.copy()
         # Update trial best
