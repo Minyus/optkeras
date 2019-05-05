@@ -65,7 +65,7 @@ class OptKeras(Callback):
         self.gs_progress = 0
         self.study = optuna.create_study(**kwargs)
         self.study_name = self.study.study_name
-
+        self.directory_path = directory_path
         self.keras_log_file_path = self.add_dir(keras_log_file_suffix)
         self.optuna_log_file_path = self.add_dir(optuna_log_file_suffix)
 
