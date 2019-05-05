@@ -3,6 +3,7 @@ from keras.callbacks import Callback, CSVLogger, ModelCheckpoint
 import os, glob
 import numpy as np
 from datetime import datetime
+from pathlib import Path
 
 import optuna
 
@@ -10,19 +11,21 @@ import optuna
 class OptKeras(Callback):
     """ The main class of OptKeras which can act as a callback for Keras.
     """
-    def __init__(self, 
-                 monitor = 'val_error',
+    def __init__(self,
+                 monitor = 'val_acc',
                  enable_pruning = False,
                  enable_keras_log = True,
                  keras_log_file_suffix = '_Keras.csv',
                  enable_optuna_log = True,
                  optuna_log_file_suffix = '_Optuna.csv',
                  models_to_keep = 1,
-                 model_file_prefix = 'model_', 
-                 model_file_suffix = '.hdf5',
+                 ckpt_period = 1,
+                 model_file_prefix = 'model_',
+                 model_file_suffix = '.h5',
                  directory_path = '',
                  verbose = 1,
                  random_grid_search_mode = False,
+                 mode_max = True,
                  **kwargs):
         """ Wrapper of optuna.create_study
         Args:
@@ -39,15 +42,17 @@ class OptKeras(Callback):
             optuna_log_file_suffix: Suffix of the file if enable_optuna_log is True.
             models_to_keep: The number of models to keep.
                 Either 1 in default , 0, or -1 (save all models).
+            ckpt_period: Period to save model check points. 1 in default.
             model_file_prefix: Prefix of the model file path if models_to_keep is not 0.
                 'model_' in default.
             model_file_suffix: Suffix of the model file path if models_to_keep is not 0.
                 '.hdf5' in default.
             directory_path: The path of the directory for the files.
-                '' (Current working directory) in default.
+                Current working directory in default.
             verbose: How much to print messages onto the screen.
                 0 (no messages), 1 in default, 2 (troubleshooting)
             random_grid_search_mode: Run randomized grid search instead of optimization. False in default.
+            mode_max: True if the monitored value is being maximized. Set True for accuracy or F1. False in default.
             **kwargs: parameters for optuna.study.create_study():
                 study_name, storage, sampler=None, pruner=None, direction='minimize'
                 See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.create_study
@@ -60,12 +65,16 @@ class OptKeras(Callback):
         self.gs_progress = 0
         self.study = optuna.create_study(**kwargs)
         self.study_name = self.study.study_name
-        self.keras_log_file_path = directory_path + self.study_name + keras_log_file_suffix
-        self.optuna_log_file_path = directory_path + self.study_name + optuna_log_file_suffix
+
+        self.keras_log_file_path = self.add_dir(keras_log_file_suffix)
+        self.optuna_log_file_path = self.add_dir(optuna_log_file_suffix)
+
         self.monitor = monitor
-        self.mode_max = (monitor in ['acc', 'val_acc']) # The larger acc or val_acc, the better
-        self.mode = 'max' if self.mode_max else 'min'
-        self.default_value = -np.Inf if self.mode_max else np.Inf
+        self.mode_max = mode_max
+        self.minimizing_metric = self.monitor
+        if self.mode_max:
+            self.minimizing_metric += '_Neg'
+
         self.latest_logs = {}
         self.latest_value = self.default_value
         self.trial_best_logs = {}
@@ -74,13 +83,18 @@ class OptKeras(Callback):
         self.enable_keras_log = enable_keras_log
         self.enable_optuna_log = enable_optuna_log
         self.models_to_keep = models_to_keep
-        self.model_file_prefix = directory_path + self.study_name + '_' + model_file_prefix
+        self.ckpt_period = ckpt_period
+        self.model_file_prefix = self.add_dir(model_file_prefix)
         self.model_file_suffix = model_file_suffix
         self.verbose = verbose
         self.keras_verbose = max(self.verbose - 1 , 0) # decrement
         if self.verbose >= 1:
             print('[{}]'.format(self.get_datetime()),
             'Ready for optimization. (message printed as verbose is set to 1+)')
+
+    def add_dir(self, suffix_str):
+        p = Path(self.directory) / (self.study_name + '_' + suffix_str)
+        return str(p)
 
     def optimize(self, *args, **kwargs):
         """
@@ -139,10 +153,10 @@ class OptKeras(Callback):
             csv_logger = CSVLogger(self.keras_log_file_path, append = True)
             callbacks.append(csv_logger)
         if self.models_to_keep != 0:
-            check_point = ModelCheckpoint(filepath = self.model_file_path, 
-                monitor = self.monitor, mode = self.mode, save_best_only = True, 
-                save_weights_only = False, period = 1, 
-                verbose = self.keras_verbose)
+            check_point = ModelCheckpoint(filepath = self.model_file_path,
+                                          monitor = self.minimizing_metric, mode = 'min', save_best_only = True,
+                                          save_weights_only = False, period = self.ckpt_period,
+                                          verbose = self.keras_verbose)
             callbacks.append(check_point)
             self.clean_up_model_files()                
         if self.enable_pruning:
@@ -235,14 +249,16 @@ class OptKeras(Callback):
             epoch:
             logs:
         """
+        assert self.monitor in logs, '[OptKeras] Monitor variable needs to be in the logs dictionary. Use a callback.'
+        if self.mode_max:
+            logs[self.minimizing_metric] = - logs.get(self.monitor)
+
         self.datetime_epoch_end = self.get_datetime()
         # Add error and val_error to logs for use as an objective to minimize
-        logs['error'] = 1 - logs.get('acc', 0)
-        logs['val_error'] = 1 - logs.get('val_acc', 0)
+
         logs['_Datetime_epoch_begin'] = self.datetime_epoch_begin
         logs['_Datetime_epoch_end'] = self.datetime_epoch_end
         logs['_Trial_id'] = self.trial.trial_id
-        logs['_Monitor'] = self.monitor
         # Update the best logs
 
         def update_flag(latest, best, mode_max = False):
@@ -250,16 +266,16 @@ class OptKeras(Callback):
                 or ((not mode_max) and (latest < best))
 
         def update_best_logs(latest_logs = {}, best_logs = {}, 
-                             monitor = 'val_error', 
+                             minimizing_metric = 'val_acc_Neg',
                              mode_max = False, default_value=np.Inf):
-            latest = latest_logs.get(monitor, default_value)
-            best = best_logs.get(monitor, default_value)
+            latest = latest_logs.get(minimizing_metric, default_value)
+            best = best_logs.get(minimizing_metric, default_value)
             if update_flag(latest, best, mode_max = mode_max):
                 best_logs.update(latest_logs)
         self.latest_logs = logs.copy()
         # Update trial best
         update_best_logs(self.latest_logs, self.trial_best_logs,  
-                         self.monitor, self.mode_max, self.default_value)
+                         minimizing_metric=self.minimizing_metric)
         self.trial_best_value = \
             self.trial_best_logs.get(self.monitor, self.default_value)        
         # Recommended: save the logs from the best epoch as attributes

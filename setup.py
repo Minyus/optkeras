@@ -22,7 +22,8 @@ setup(
 	description='OptKeras: Wrapper of Keras and Optuna to optimize hyperparameters of Deep Learning.',
 	install_requires=[
         'keras',
-        'optuna'
+        'optuna',
+        'numpy'
     ],
 	keywords='keras optuna',
 	zip_safe=False,
