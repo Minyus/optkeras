@@ -161,7 +161,7 @@ class OptKeras(Callback):
             self.clean_up_model_files()                
         if self.enable_pruning:
             pruning = \
-                optuna.integration.KerasPruningCallback(trial, self.monitor)
+                optuna.integration.KerasPruningCallback(trial, self.minimizing_metric)
             callbacks.append(pruning)       
         return callbacks
 
@@ -277,7 +277,7 @@ class OptKeras(Callback):
         update_best_logs(self.latest_logs, self.trial_best_logs,  
                          minimizing_metric=self.minimizing_metric)
         self.trial_best_value = \
-            self.trial_best_logs.get(self.monitor, np.Inf)
+            self.trial_best_logs.get(self.minimizing_metric, np.Inf)
         # Recommended: save the logs from the best epoch as attributes
         # (logs include timestamp, monitor, val_acc, val_error, val_loss)
         self.save_logs_as_optuna_attributes()
