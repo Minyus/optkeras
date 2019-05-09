@@ -192,23 +192,25 @@ class OptKeras(Callback):
         Returns: None
         """
         # Generate the Optuna CSV log file
-        if self.enable_optuna_log: self.generate_optuna_log_file()
+        if self.enable_optuna_log:
+            self.generate_optuna_log_file()
+
         # best_trial
         try:
             self.best_trial = self.study.best_trial
         except:
-            self.best_trial = optuna.structs.FrozenTrial(
-                None, None, None, None, None, None, None, None, None, None)
+            self.best_trial = get_trial_default()
+
         # latest_trial
-        self.latest_trial = optuna.structs.FrozenTrial(
-                None, None, None, None, None, None, None, None, None, None)
+        self.latest_trial = get_trial_default()
         if len(self.study.trials) >= 1:
             if self.study.trials[-1].state == optuna.structs.TrialState.RUNNING:
                 if len(self.study.trials) >= 2:
                     self.latest_trial = self.study.trials[-2]
             else: 
                 self.latest_trial = self.study.trials[-1]         
-        if self.verbose >= 1: self.print_results()
+        if self.verbose >= 1:
+            self.print_results()
 
     def print_results(self):
         """ Print summary of results
@@ -314,6 +316,18 @@ class OptKeras(Callback):
         self.post_process()
 
 
+def get_trial_default():
+    num_fields = optuna.structs.FrozenTrial._field_types.__len__()
+    assert num_fields in (10, 11, 12)
+    if num_fields == 12: # possible future version
+        return optuna.structs.FrozenTrial(
+            None, None, None, None, None, None, None, None, None, None, None, None)
+    elif num_fields == 11: # version 0.9.0 or later
+        return optuna.structs.FrozenTrial(
+            None, None, None, None, None, None, None, None, None, None, None)
+    elif num_fields == 10: # version 0.8.0 or prior
+        return optuna.structs.FrozenTrial(
+            None, None, None, None, None, None, None, None, None, None)
 
 def str_list(input_list):
     """ Convert all the elements in a list to str

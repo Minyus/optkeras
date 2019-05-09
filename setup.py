@@ -19,14 +19,14 @@ setup(
     author='Yusuke Minami',
     author_email='me@minyus.github.com',
     url='https://github.com/Minyus/optkeras',
-	description='OptKeras: Wrapper of Keras and Optuna to optimize hyperparameters of Deep Learning.',
-	install_requires=[
+    description='OptKeras: Wrapper of Keras and Optuna to optimize hyperparameters of Deep Learning.',
+    install_requires=[
         'keras',
-        'optuna==0.7.0',
+        'optuna',
         'numpy'
     ],
-	keywords='keras optuna',
-	zip_safe=False,
+    keywords='keras optuna',
+    zip_safe=False,
     test_suite='tests',
     classifiers=[
         'Development Status :: 3 - Alpha',
