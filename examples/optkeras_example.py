@@ -125,7 +125,7 @@ Set n_trials and/or timeout (in sec) for optimization by Optuna
 ok.optimize(objective, timeout = 3*60) # Run for 3 minutes for demo
 
 """ Show Results """
-print('Best trial id: ', ok.best_trial.trial_id)
+print('Best trial number: ', ok.best_trial.number)
 print('Best value:', ok.best_trial.value)
 print('Best parameters: \n', ok.best_trial.params)
 

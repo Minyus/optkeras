@@ -109,15 +109,15 @@ class OptKeras(Callback):
         self.study.optimize(*args, **kwargs)
         self.post_process()
 
-    def get_model_file_path(self, trial_id = None):
+    def get_model_file_path(self, trial_num = None):
         """
         Args:
-            trial_id: Trial Id of Optuna study
+            trial_num: Trial Id of Optuna study
 
         Returns: model file path string
         """
         return ''.join([self.model_file_prefix, 
-                        '*' if trial_id is None else '{:06d}'.format(trial_id),
+                        '*' if trial_num is None else '{:06d}'.format(trial_num),
                         self.model_file_suffix ])
 
     def clean_up_model_files(self):
@@ -126,7 +126,7 @@ class OptKeras(Callback):
         """
         if self.models_to_keep in [1]:
             self.best_model_file_path = \
-                self.get_model_file_path(self.best_trial.trial_id)
+                self.get_model_file_path(self.best_trial.number)
             self.model_file_list = \
                 glob.glob(self.get_model_file_path())
             for model_file in self.model_file_list:
@@ -147,7 +147,7 @@ class OptKeras(Callback):
         self.synch_with_optuna()
         callbacks = []
         self.trial = trial
-        self.model_file_path = self.get_model_file_path(trial.trial_id)     
+        self.model_file_path = self.get_model_file_path(trial.number)
         callbacks.append(self)
         if self.enable_keras_log:
             csv_logger = CSVLogger(self.keras_log_file_path, append = True)
@@ -221,10 +221,10 @@ class OptKeras(Callback):
             # if any trial with a valid value is found, show the result
             print(
                 '[{}] '.format(self.get_datetime()) + \
-                'Latest trial id: {}'.format(self.latest_trial.trial_id) + \
+                'Latest trial num: {}'.format(self.latest_trial.number) + \
                 ', value: {}'.format(self.latest_trial.value) + \
                 ' ({}) '.format(self.latest_trial.state) + \
-                '| Best trial id: {}'.format(self.best_trial.trial_id) + \
+                '| Best trial num: {}'.format(self.best_trial.number) + \
                 ', value: {}'.format(self.best_trial.value) + \
                 ', parameters: {}'.format(self.best_trial.params) )
 
@@ -260,7 +260,7 @@ class OptKeras(Callback):
 
         logs['_Datetime_epoch_begin'] = self.datetime_epoch_begin
         logs['_Datetime_epoch_end'] = self.datetime_epoch_end
-        logs['_Trial_id'] = self.trial.trial_id
+        logs['_Trial_num'] = self.trial.number
         # Update the best logs
 
         def update_flag(latest, best, mode_max = False):
