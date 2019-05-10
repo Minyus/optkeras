@@ -138,32 +138,46 @@ Not at all! You can access the full feaures of Keras and Optuna even if OptKeras
 
 ### What parameaters are available for OptKeras?
 
-
-- monitor: The metric to optimize by Optuna. 'val_error' in default or 'val_loss'.
-- enable_pruning: Enable pruning by Optuna. False in default.
-See https://optuna.readthedocs.io/en/latest/tutorial/pruning.html
-- enable_keras_log: Enable logging by Keras CSVLogger callback. True in default.
-See https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/CSVLogger
+- monitor: The metric to optimize by Optuna.
+'val_loss' in default.
+- enable_pruning: Enable pruning by Optuna.
+False in default.
+Reference: https://optuna.readthedocs.io/en/latest/tutorial/pruning.html
+- enable_keras_log: Enable logging by Keras CSVLogger callback.
+rue in default.
+Reference: https://www.tensorflow.org/api_docs/python/tf/keras/callbacks/CSVLogger
 - keras_log_file_suffix: Suffix of the file if enable_keras_log is True.
 '_Keras.csv' in default.
 - enable_optuna_log: Enable generating a log file by Optuna study.trials_dataframe().
 True in default.
-See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.Study.trials_dataframe
+Reference: https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.Study.trials_dataframe
 - optuna_log_file_suffix: Suffix of the file if enable_optuna_log is True.
-- models_to_keep: The number of models to keep.
-Either 1 in default , 0, or -1 (save all models).
+'Optuna.csv' in default.
+- models_to_keep: The number of models to keep. Either 1 , 0, or -1 (save all models).
+1 in default.
+- ckpt_period: Period to save model check points.
+1 in default.
+Reference: https://keras.io/callbacks/#modelcheckpoint
+- save_weights_only: if True, then only the model's weights will be saved (model.save_weights(filepath)), else the full model is saved (model.save(filepath)).
+False in default.
+Reference: https://keras.io/callbacks/#modelcheckpoint
+- save_best_only: if save_best_only=True, the latest best model according to the quantity monitored will not be overwritten.
+True in default.
+Reference: https://keras.io/callbacks/#modelcheckpoint
 - model_file_prefix: Prefix of the model file path if models_to_keep is not 0.
 'model_' in default.
 - model_file_suffix: Suffix of the model file path if models_to_keep is not 0.
-'.hdf5' in default.
+'.h5' in default.
 - directory_path: The path of the directory for the files.
-'' (Current working directory) in default.
-- verbose: How much to print messages onto the screen.
-0 (no messages), 1 in default, 2 (troubleshooting)
-- random_grid_search_mode: Run randomized grid search instead of optimization. False in default.
+Current working directory in default.
+- verbose: How much info to print onto the screen.
+Either 0 (no messages), 1 , or 2 (troubleshooting)
+1 in default.
+- random_grid_search_mode: Run randomized grid search instead of optimization.
+False in default.
 - **kwargs: parameters for optuna.study.create_study():
 study_name, storage, sampler=None, pruner=None, direction='minimize'
-See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.create_study
+Reference: https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.create_study
 
 
 ### Which version of Python is supported?
@@ -178,9 +192,9 @@ Python 3.5 or later
 - Ubuntu 18.04.1 LTS
 - Python 3.6.7
 - Keras 2.2.4
-- TensorFlow 1.13.0-rc1
-- Optuna 0.7.0
-- OptKeras 0.0.1
+- TensorFlow 1.13.1
+- Optuna 0.10.0
+- OptKeras 0.0.5
 
 ### About author 
 
