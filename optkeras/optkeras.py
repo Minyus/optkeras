@@ -12,20 +12,21 @@ class OptKeras(Callback):
     """ The main class of OptKeras which can act as a callback for Keras.
     """
     def __init__(self,
-                 monitor = 'val_acc',
-                 enable_pruning = False,
-                 enable_keras_log = True,
-                 keras_log_file_suffix = 'Keras.csv',
-                 enable_optuna_log = True,
-                 optuna_log_file_suffix = 'Optuna.csv',
-                 models_to_keep = 1,
-                 ckpt_period = 1,
-                 model_file_prefix = 'model_',
-                 model_file_suffix = '.h5',
-                 directory_path = '',
-                 verbose = 1,
-                 random_grid_search_mode = False,
-                 mode_max = True,
+                 monitor='val_loss',
+                 enable_pruning=False,
+                 enable_keras_log=True,
+                 keras_log_file_suffix='Keras.csv',
+                 enable_optuna_log=True,
+                 optuna_log_file_suffix='Optuna.csv',
+                 models_to_keep=1,
+                 ckpt_period=1,
+                 save_weights_only=False,
+                 save_best_only=True,
+                 model_file_prefix='model_',
+                 model_file_suffix='.h5',
+                 directory_path='',
+                 verbose=1,
+                 random_grid_search_mode=False,
                  **kwargs):
         """ Wrapper of optuna.create_study
         Args:
@@ -52,7 +53,6 @@ class OptKeras(Callback):
             verbose: How much to print messages onto the screen.
                 0 (no messages), 1 in default, 2 (troubleshooting)
             random_grid_search_mode: Run randomized grid search instead of optimization. False in default.
-            mode_max: True if the monitored value is being maximized. Set True for accuracy or F1. False in default.
             **kwargs: parameters for optuna.study.create_study():
                 study_name, storage, sampler=None, pruner=None, direction='minimize'
                 See https://optuna.readthedocs.io/en/latest/reference/study.html#optuna.study.create_study
@@ -70,10 +70,9 @@ class OptKeras(Callback):
         self.optuna_log_file_path = self.add_dir(optuna_log_file_suffix)
 
         self.monitor = monitor
-        self.mode_max = mode_max
-        self.minimizing_metric = self.monitor
-        if self.mode_max:
-            self.minimizing_metric += '_Neg'
+        self.direction = kwargs.get('direction', 'minimize')
+        self.mode_max = self.direction != 'minimize'
+        self.default_value = -np.Inf if self.mode_max else np.Inf
 
         self.latest_logs = {}
         self.latest_value = np.Inf
@@ -84,6 +83,8 @@ class OptKeras(Callback):
         self.enable_optuna_log = enable_optuna_log
         self.models_to_keep = models_to_keep
         self.ckpt_period = ckpt_period
+        self.save_weights_only = save_weights_only
+        self.save_best_only=save_best_only,
         self.model_file_prefix = self.add_dir(model_file_prefix)
         self.model_file_suffix = model_file_suffix
         self.verbose = verbose
@@ -150,18 +151,23 @@ class OptKeras(Callback):
         self.model_file_path = self.get_model_file_path(trial.number)
         callbacks.append(self)
         if self.enable_keras_log:
-            csv_logger = CSVLogger(self.keras_log_file_path, append = True)
+            csv_logger = CSVLogger(self.keras_log_file_path, append=True)
             callbacks.append(csv_logger)
         if self.models_to_keep != 0:
-            check_point = ModelCheckpoint(filepath = self.model_file_path,
-                                          monitor = self.minimizing_metric, mode = 'min', save_best_only = True,
-                                          save_weights_only = False, period = self.ckpt_period,
-                                          verbose = self.keras_verbose)
+            check_point = ModelCheckpoint(
+                filepath=self.model_file_path,
+                monitor=self.monitor,
+                mode=self.direction[:3],
+                save_best_only=self.save_best_only,
+                save_weights_only=self.save_weights_only,
+                period=self.ckpt_period,
+                verbose=self.keras_verbose
+                )
             callbacks.append(check_point)
             self.clean_up_model_files()                
         if self.enable_pruning:
             pruning = \
-                optuna.integration.KerasPruningCallback(trial, self.minimizing_metric)
+                optuna.integration.KerasPruningCallback(trial, self.monitor)
             callbacks.append(pruning)       
         return callbacks
 
@@ -216,17 +222,33 @@ class OptKeras(Callback):
         """ Print summary of results
         Returns: None
         """
-        if len(self.study.trials) > 0 and (self.verbose >= 2 or \
-            (self.verbose == 1 and self.latest_trial.state != optuna.structs.TrialState.PRUNED)):
+        if len(self.study.trials) > 0 and \
+            (self.verbose >= 2 or \
+            (self.verbose == 1 and \
+             self.latest_trial.state != optuna.structs.TrialState.PRUNED)):
             # if any trial with a valid value is found, show the result
-            print(
-                '[{}] '.format(self.get_datetime()) + \
-                'Latest trial num: {}'.format(self.latest_trial.number) + \
-                ', value: {}'.format(self.latest_trial.value) + \
-                ' ({}) '.format(self.latest_trial.state) + \
-                '| Best trial num: {}'.format(self.best_trial.number) + \
-                ', value: {}'.format(self.best_trial.value) + \
-                ', parameters: {}'.format(self.best_trial.params) )
+            report_list = ['[{}] '.format(self.get_datetime())]
+            if self.latest_trial.number is not None:
+                report_list.extend([
+                'Trial#: {}'.format(self.latest_trial.number),
+                ]
+            if self.latest_trial.value is not None:
+                report_list.extend([
+                    ', value: {:.6e}'.format(self.latest_trial.value),
+                    ])
+            if self.latest_trial.state != TrialState.COMPLETE:
+                report_list.extend([
+                        ' ({}) '.format(self.latest_trial.state),
+                        ])
+            if self.best_trial.value is not None:
+                report_list.extend([
+                    '| Best trial#: {}'.format(self.best_trial.number),
+                    ', value: {:.6e}'.format(self.best_trial.value),
+                    ', params: {}'.format(self.best_trial.params),
+                    ])
+
+            report_str = ''.join(report_list)
+            print(report_str)
 
     def post_process(self):
         """ Process after optimization
@@ -252,8 +274,6 @@ class OptKeras(Callback):
             logs:
         """
         assert self.monitor in logs, '[OptKeras] Monitor variable needs to be in the logs dictionary. Use a callback.'
-        if self.mode_max:
-            logs[self.minimizing_metric] = - logs.get(self.monitor)
 
         self.datetime_epoch_end = self.get_datetime()
         # Add error and val_error to logs for use as an objective to minimize
@@ -263,23 +283,26 @@ class OptKeras(Callback):
         logs['_Trial_num'] = self.trial.number
         # Update the best logs
 
-        def update_flag(latest, best, mode_max = False):
+        def update_flag(mode_max, latest, best):
             return (mode_max and (latest > best)) \
                 or ((not mode_max) and (latest < best))
 
-        def update_best_logs(latest_logs = {}, best_logs = {}, 
-                             minimizing_metric = 'val_acc_Neg',
-                             mode_max = False, default_value=np.Inf):
-            latest = latest_logs.get(minimizing_metric, default_value)
-            best = best_logs.get(minimizing_metric, default_value)
-            if update_flag(latest, best):
+        def update_best_logs(
+                monitor, mode_max, default_value,
+                latest_logs = {}, best_logs = {}
+                ):
+            latest = latest_logs.get(monitor, default_value)
+            best = best_logs.get(monitor, default_value)
+            if update_flag(mode_max, latest, best):
                 best_logs.update(latest_logs)
         self.latest_logs = logs.copy()
         # Update trial best
-        update_best_logs(self.latest_logs, self.trial_best_logs,  
-                         minimizing_metric=self.minimizing_metric)
+        update_best_logs(
+            self.monitor, self.mode_max, self.default_value,
+            self.latest_logs, self.trial_best_logs,
+            )
         self.trial_best_value = \
-            self.trial_best_logs.get(self.minimizing_metric, np.Inf)
+            self.trial_best_logs.get(self.monitor, self.default_value)
         # Recommended: save the logs from the best epoch as attributes
         # (logs include timestamp, monitor, val_acc, val_error, val_loss)
         self.save_logs_as_optuna_attributes()

@@ -54,20 +54,20 @@ print('input_shape: ', input_shape )
 
 #%%  A simple Keras model
 
-# model = Sequential()
-# model.add(Conv2D(
-#     filters = 32,
-#     kernel_size = 3,
-#     strides = 1,
-#     activation = 'relu',
-#     input_shape = input_shape ))
-# model.add(Flatten())
-# model.add(Dense(num_classes, activation='softmax'))
-# model.compile(optimizer = Adam(),
-#             loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-# model.fit(x_train, y_train,
-#           validation_data = (x_test, y_test), shuffle = True,
-#           batch_size = 512, epochs = 2)
+model = Sequential()
+model.add(Conv2D(
+    filters=32,
+    kernel_size=3,
+    strides=1,
+    activation='relu',
+    input_shape=input_shape ))
+model.add(Flatten())
+model.add(Dense(num_classes, activation='softmax'))
+model.compile(optimizer=Adam(),
+            loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+model.fit(x_train, y_train,
+          validation_data=(x_test, y_test), shuffle=True,
+          batch_size=512, epochs=2)
 
 #%%  Optimization of a simple Keras model without pruning
 
@@ -78,7 +78,9 @@ You can specify arguments for Optuna's create_study method and other arguments
 for OptKeras such as enable_pruning. 
 """
 
-ok = OptKeras(study_name=study_name)
+ok = OptKeras(study_name=study_name,
+              monitor='val_acc',
+              direction='maximize')
 
 
 """ Step 2. Define objective function for Optuna """
@@ -97,24 +99,24 @@ def objective(trial):
     """    
     model = Sequential()
     model.add(Conv2D(
-        filters = trial.suggest_categorical('filters', [32, 64]), 
-        kernel_size = trial.suggest_categorical('kernel_size', [3, 5]), 
-        strides = trial.suggest_categorical('strides', [1, 2]), 
-        activation = trial.suggest_categorical('activation', ['relu', 'linear']), 
-        input_shape = input_shape ))
+        filters=trial.suggest_categorical('filters', [32, 64]),
+        kernel_size=trial.suggest_categorical('kernel_size', [3, 5]),
+        strides=trial.suggest_categorical('strides', [1, 2]),
+        activation=trial.suggest_categorical('activation', ['relu', 'linear']),
+        input_shape=input_shape ))
     model.add(Flatten())
     model.add(Dense(num_classes, activation='softmax'))
-    model.compile(optimizer = Adam(), 
+    model.compile(optimizer=Adam(),
                 loss='sparse_categorical_crossentropy', metrics=['accuracy'])
     
     """ Step 2.2. Specify callbacks(trial) and keras_verbose in fit 
     (or fit_generator) method of Keras model
     """
     model.fit(x_train, y_train, 
-              validation_data = (x_test, y_test), shuffle = True,
-              batch_size = 512, epochs = 2,
-              callbacks = ok.callbacks(trial), 
-              verbose = ok.keras_verbose )  
+              validation_data=(x_test, y_test), shuffle=True,
+              batch_size=512, epochs=2,
+              callbacks=ok.callbacks(trial),
+              verbose=ok.keras_verbose )
     
     """ Step 2.3. Return trial_best_value (or latest_value) """
     return ok.trial_best_value
@@ -157,27 +159,27 @@ study_name = dataset_name + '_GridSearch'
 ok = OptKeras(study_name=study_name, random_grid_search_mode=True)
 
 def objective(trial):
-   
+
     K.clear_session()
-    
+
     model = Sequential()
     model.add(Conv2D(
-        filters = trial.suggest_categorical('filters', [32, 64]), 
-        kernel_size = trial.suggest_categorical('kernel_size', [3, 5]), 
-        strides = trial.suggest_categorical('strides', [1, 2]), 
-        activation = trial.suggest_categorical('activation', ['relu', 'linear']), 
-        input_shape = input_shape ))
+        filters=trial.suggest_categorical('filters', [32, 64]),
+        kernel_size=trial.suggest_categorical('kernel_size', [3, 5]),
+        strides=trial.suggest_categorical('strides', [1]),
+        activation=trial.suggest_categorical('activation', ['relu', 'linear']),
+        input_shape=input_shape ))
     model.add(Flatten())
     model.add(Dense(num_classes, activation='softmax'))
-    model.compile(optimizer = Adam(), 
+    model.compile(optimizer=Adam(),
                 loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-    
-    model.fit(x_train, y_train, 
-              validation_data = (x_test, y_test), shuffle = True,
-              batch_size = 512, epochs = 2,
-              callbacks = ok.callbacks(trial), 
-              verbose = ok.keras_verbose )  
-    
+
+    model.fit(x_train, y_train,
+              validation_data=(x_test, y_test), shuffle = True,
+              batch_size=512, epochs=2,
+              callbacks=ok.callbacks(trial),
+              verbose=ok.keras_verbose )
+
     return ok.trial_best_value
 
 """ Set the number of parameter sets as n_trials for complete grid search """
@@ -197,13 +199,15 @@ ok = OptKeras(
         seed=None), 
     pruner=optuna.pruners.SuccessiveHalvingPruner(
         min_resource=1, reduction_factor=4, min_early_stopping_rate=0), 
-    study_name = study_name,
-    load_if_exists = True,
+    study_name=study_name,
+    load_if_exists=True,
     # parameters for OptKeras
-    monitor='val_error', # Either 'val_error' (1 - val_acc) or 'val_loss'
+    monitor='val_acc',
+    direction='maximize',
     enable_pruning=True, 
     models_to_keep=1, # Either 1, 0, or -1 (save all models) 
-    verbose=1 )
+    verbose=1,
+    )
 
 def objective(trial): 
     epochs = 10
@@ -215,12 +219,12 @@ def objective(trial):
         # 1 Convolution layer
         i = 1
         model.add(Conv2D(
-            filters = int(trial.suggest_discrete_uniform(
+            filters=int(trial.suggest_discrete_uniform(
                 'Conv_{}_num_filters'.format(i), 32, 64, 32)), 
             kernel_size=tuple([trial.suggest_int(
                 'Conv_{}_kernel_size'.format(i), 2, 3)] * 2),
             activation='relu',
-            input_shape = input_shape))
+            input_shape=input_shape))
         model.add(MaxPooling2D(pool_size=tuple([trial.suggest_int(
                 'Conv_{}_max_pooling_size'.format(i), 2, 3)] * 2)))
         model.add(Dropout(trial.suggest_discrete_uniform(
@@ -253,18 +257,16 @@ def objective(trial):
     
     if ok.verbose >= 2: model.summary()
     
-    batch_size = trial.suggest_int('Batch_size', 256, 256) 
-    #batch_size = int(trial.suggest_discrete_uniform(
-    #                  'Batch_size', 256, 512, 256) )
+    batch_size = trial.suggest_int('Batch_size', 256, 256)
     data_augmentation = trial.suggest_int('Data_augmentation', 0, 1)
     
     if not data_augmentation:
         # [Required] Specify callbacks(trial) in fit method
-        model.fit(x_train, y_train, batch_size = batch_size,
-                  epochs = epochs, validation_data = (x_test, y_test),
-                  shuffle = True,
-                  callbacks = ok.callbacks(trial), 
-                  verbose = ok.keras_verbose )
+        model.fit(x_train, y_train, batch_size=batch_size,
+                  epochs=epochs, validation_data=(x_test, y_test),
+                  shuffle=True,
+                  callbacks=ok.callbacks(trial),
+                  verbose=ok.keras_verbose )
     
     if data_augmentation:
         # This will do preprocessing and realtime data augmentation:
@@ -280,14 +282,14 @@ def objective(trial):
                                          batch_size=batch_size),
                             epochs=epochs, validation_data=(x_test, y_test),
                             steps_per_epoch=len(x_train) // batch_size,
-                            callbacks = ok.callbacks(trial), 
-                            verbose = ok.keras_verbose )  
+                            callbacks=ok.callbacks(trial),
+                            verbose=ok.keras_verbose )
     
     # [Required] return trial_best_value (recommended) or latest_value
     return ok.trial_best_value
 
 # Set n_trials and/or timeout (in sec) for optimization by Optuna
-ok.optimize(objective, timeout = 3*60) # Run for 3 minutes for demo
+ok.optimize(objective, timeout=3*60) # Run for 3 minutes for demo
 
 #%%
 """## The end of code.
