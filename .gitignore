@@ -109,3 +109,7 @@ venv.bak/
 # output files
 *.h5
 # *.csv
+
+# pipenv
+Pipfile
+Pipfile.lock
