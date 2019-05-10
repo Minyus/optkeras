@@ -19,10 +19,10 @@ A Python package designed to optimize hyperparameters of Keras Deep Learning mod
 
 ### What are the advantages of OptKeras?
 
-- Optuna supports pruning option which can terminate the trial (training) early based on the interim objective values (error rate, loss, etc.). Please see [Optuna's key features](https://optuna.org/#key_features). OptKeras can leverage Optuna's pruning option. If enable_pruning is set to True and the performance in early epochs is not good, OptKeras can terminate training (after the first epoch at the earliest) and try another parameter set.
+- Optuna supports pruning option which can terminate the trial (training) early based on the interim objective values (loss, accuracy, etc.). Please see [Optuna's key features](https://optuna.org/#key_features). OptKeras can leverage Optuna's pruning option. If enable_pruning is set to True and the performance in early epochs is not good, OptKeras can terminate training (after the first epoch at the earliest) and try another parameter set.
 - Optuna manages logs in database using [SQLAlchemy](https://www.sqlalchemy.org/) and can resume trials after interruption, even after the machine is rebooted (after 90 minutes of inactivity or 12 hours of runtime of Google Colab) if the database is saved as a storage file. OptKeras can leverage this feature.
 - More epochs do not necessarily improve the performance of Deep Neural Network. OptKeras keeps the best value though epochs so it can be used as the final value.
-- OptKeras can log metrics (accuracy, loss, and error for train and test datasets) with trial id and timestamp (begin and end) for each epoch to a CSV file.
+- OptKeras can log metrics (loss, accuracy, etc. for train and test datasets) with trial id and timestamp (begin and end) for each epoch to a CSV file.
 - OptKeras can save the best Keras models (only the best Keras model overall or all of the best models for each parameter set) with trial id in its file name so you can link to the log.
 - OptKeras supports randomized grid search (randomized search by sampling parameter sets without replacement; grid search in a randomized order) useful if your primary purpose is benchmarking/comparison rather than optimization. 
 
@@ -126,10 +126,6 @@ Set n_trials and/or timeout (in sec) for optimization by Optuna
 ok.optimize(objective, timeout = 60) # 1 minute for demo
 ```
 
-### Why OptKeras was developed?
-
-Optuna 0.7.0 (released on 2019-01-24) supports minimization but not maximization. This becomes a problem when using Optuna's pruning feature based on accuracy value (an objective to maximize) as Keras does not log error (= 1 - accuracy) in the default callback. OptKeras calculates error and val_error from acc and val_acc, respectively, in a Keras callback so Optuna can use it. 
-
 
 ### Will OptKeras limit features of Keras or Optuna?
 
@@ -186,7 +182,7 @@ Python 3.5 or later
 ### What was the tested environment for OptKeras?
 
 - Google Colaboratory with GPU enabled
-- NVIDIA Tesla K80
+- NVIDIA Tesla T4
 - Driver Version: 410.79 
 - CUDA Version: 10.0
 - Ubuntu 18.04.1 LTS
