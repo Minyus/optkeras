@@ -231,7 +231,7 @@ class OptKeras(Callback):
             if self.latest_trial.number is not None:
                 report_list.extend([
                 'Trial#: {}'.format(self.latest_trial.number),
-                ]
+                ])
             if self.latest_trial.value is not None:
                 report_list.extend([
                     ', value: {:.6e}'.format(self.latest_trial.value),
