@@ -108,4 +108,4 @@ venv.bak/
 
 # output files
 *.h5
-*.csv
+# *.csv

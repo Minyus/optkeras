@@ -151,40 +151,6 @@ print('Data Frame read from', ok.keras_log_file_path, '\n')
 display(pd.read_csv(ok.keras_log_file_path))
 
 
-#%%  Randomized Grid Search of a simple Keras model
-
-study_name = dataset_name + '_GridSearch'
-
-""" To run randomized grid search, set random_grid_search_mode True """
-ok = OptKeras(study_name=study_name, random_grid_search_mode=True)
-
-def objective(trial):
-
-    K.clear_session()
-
-    model = Sequential()
-    model.add(Conv2D(
-        filters=trial.suggest_categorical('filters', [32, 64]),
-        kernel_size=trial.suggest_categorical('kernel_size', [3, 5]),
-        strides=trial.suggest_categorical('strides', [1]),
-        activation=trial.suggest_categorical('activation', ['relu', 'linear']),
-        input_shape=input_shape ))
-    model.add(Flatten())
-    model.add(Dense(num_classes, activation='softmax'))
-    model.compile(optimizer=Adam(),
-                loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-
-    model.fit(x_train, y_train,
-              validation_data=(x_test, y_test), shuffle = True,
-              batch_size=512, epochs=2,
-              callbacks=ok.callbacks(trial),
-              verbose=ok.keras_verbose )
-
-    return ok.trial_best_value
-
-""" Set the number of parameter sets as n_trials for complete grid search """
-ok.random_grid_search(objective, n_trials = 2*2*2*2) # 2*2*2*2 = 16 param sets
-
 #%%  Optimization of a Keras model using more Optuna's features such as pruning
 
 study_name = dataset_name + '_Optimized'
@@ -290,6 +256,41 @@ def objective(trial):
 
 # Set n_trials and/or timeout (in sec) for optimization by Optuna
 ok.optimize(objective, timeout=3*60) # Run for 3 minutes for demo
+
+
+#%%  Randomized Grid Search of a simple Keras model
+
+study_name = dataset_name + '_GridSearch'
+
+""" To run randomized grid search, set random_grid_search_mode True """
+ok = OptKeras(study_name=study_name, random_grid_search_mode=True)
+
+
+def objective(trial):
+    K.clear_session()
+
+    model = Sequential()
+    model.add(Conv2D(
+        filters=trial.suggest_categorical('filters', [32, 64]),
+        kernel_size=trial.suggest_categorical('kernel_size', [3, 5]),
+        strides=trial.suggest_categorical('strides', [1]),
+        activation=trial.suggest_categorical('activation', ['relu', 'linear']),
+        input_shape=input_shape))
+    model.add(Flatten())
+    model.add(Dense(num_classes, activation='softmax'))
+    model.compile(optimizer=Adam(),
+                  loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+    model.fit(x_train, y_train,
+              validation_data=(x_test, y_test), shuffle=True,
+              batch_size=512, epochs=2,
+              callbacks=ok.callbacks(trial),
+              verbose=ok.keras_verbose)
+
+    return ok.trial_best_value
+
+""" Set the number of parameter sets as n_trials for complete grid search """
+ok.random_grid_search(objective, n_trials=2*2*2)  # 2*2*2 = 8 param sets
 
 #%%
 """## The end of code.
