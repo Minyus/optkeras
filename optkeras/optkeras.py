@@ -1,3 +1,4 @@
+import keras.backend as K
 from keras.callbacks import Callback, CSVLogger, ModelCheckpoint
 
 import os, glob
@@ -121,6 +122,15 @@ class OptKeras(Callback):
 
         Returns: None
         """
+        if K.backend() == 'tensorflow':
+            fun = args[0]
+
+            def fun_tf(trial):
+                K.clear_session()
+                fun(trial)
+
+            args = (fun_tf,) + args[1:]
+
         self.study.optimize(*args, **kwargs)
         self.post_process()
 
