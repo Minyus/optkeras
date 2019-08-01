@@ -1,6 +1,7 @@
 # OptKeras, a wrapper around Keras and Optuna
 
 [![PyPI version](https://badge.fury.io/py/optkeras.svg)](https://badge.fury.io/py/optkeras)
+![Python Version](https://img.shields.io/badge/python-3.5%20%7C%203.6%20%7C%203.7-blue.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Minyus/optkeras/blob/master/examples/OptKeras_Example.ipynb)
 
@@ -176,16 +177,10 @@ Python 3.5 or later
 
 ### What was the tested environment for OptKeras?
 
-- Google Colaboratory with GPU enabled
-- NVIDIA Tesla T4
-- Driver Version: 410.79 
-- CUDA Version: 10.0
-- Ubuntu 18.04.1 LTS
-- Python 3.6.7
 - Keras 2.2.4
-- TensorFlow 1.13.1
-- Optuna 0.10.0
-- OptKeras 0.0.5
+- TensorFlow 1.14.0
+- Optuna 0.14.0
+- OptKeras 0.0.7
 
 ### About author 
 
