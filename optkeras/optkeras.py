@@ -127,7 +127,7 @@ class OptKeras(Callback):
 
             def fun_tf(trial):
                 K.clear_session()
-                fun(trial)
+                return fun(trial)
 
             args = (fun_tf,) + args[1:]
 
