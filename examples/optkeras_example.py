@@ -86,12 +86,7 @@ ok = OptKeras(study_name=study_name,
 """ Step 2. Define objective function for Optuna """
 
 def objective(trial):
-    
-    """ Clear the backend (TensorFlow). See:
-    https://www.tensorflow.org/api_docs/python/tf/keras/backend/clear_session
-    """
-    K.clear_session() 
-    
+
     """ Step 2.1. Define parameters to try using methods of optuna.trial such as 
     suggest_categorical. In this simple demo, try 2*2*2*2 = 16 parameter sets: 
     2 values specified in list for each of 4 parameters 
@@ -178,7 +173,6 @@ ok = OptKeras(
 def objective(trial): 
     epochs = 10
     
-    K.clear_session()   
     model = Sequential()
     
     if trial.suggest_int('Conv', 0, 1):  
@@ -267,8 +261,6 @@ ok = OptKeras(study_name=study_name, random_grid_search_mode=True)
 
 
 def objective(trial):
-    K.clear_session()
-
     model = Sequential()
     model.add(Conv2D(
         filters=trial.suggest_categorical('filters', [32, 64]),

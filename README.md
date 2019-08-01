@@ -86,11 +86,6 @@ ok = OptKeras(study_name=study_name)
 
 def objective(trial):
     
-    """ Clear the backend (TensorFlow). See:
-    https://www.tensorflow.org/api_docs/python/tf/keras/backend/clear_session
-    """
-    K.clear_session() 
-    
     """ Step 2.1. Define parameters to try using methods of optuna.trial such as 
     suggest_categorical. In this simple demo, try 2*2*2*2 = 16 parameter sets: 
     2 values specified in list for each of 4 parameters 
