@@ -5,6 +5,7 @@ import os, glob
 import numpy as np
 from datetime import datetime
 from pathlib import Path
+from inspect import signature
 
 import optuna
 
@@ -302,8 +303,6 @@ class OptKeras(Callback):
         self.datetime_epoch_end = self.get_datetime()
         # Add error and val_error to logs for use as an objective to minimize
 
-        logs['_Datetime_epoch_begin'] = self.datetime_epoch_begin
-        logs['_Datetime_epoch_end'] = self.datetime_epoch_end
         logs['_Trial_num'] = self.trial.number
         # Update the best logs
 
@@ -364,7 +363,7 @@ class OptKeras(Callback):
 
 
 def get_trial_default():
-    num_fields = optuna.structs.FrozenTrial._field_types.__len__()
+    num_fields = len(signature(optuna.structs.FrozenTrial).parameters)
     assert num_fields in (10, 11, 12)
     if num_fields == 12: # possible future version
         return optuna.structs.FrozenTrial(
